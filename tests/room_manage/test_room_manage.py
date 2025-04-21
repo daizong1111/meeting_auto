@@ -1,32 +1,41 @@
 """
-此模块使用 Playwright 框架实现会议室管理系统的 UI 自动化测试，
+此模块使用 Playwright 框架实现会议室管理模块的 UI 自动化测试，
 包含增、删、改、查功能的测试用例。
 """
-from tracemalloc import start
-import re
+# from tracemalloc import start
+# import re
 
 import logging
-from playwright.sync_api import expect, sync_playwright
-import pytest
+# from playwright.sync_api import expect, sync_playwright
+# import pytest
+
+# 获取当前脚本所在的目录，并向上查找目标模块
+import os
+import sys
+
+import allure
+
+from base_case import BaseCase
+from pages.meeting_room_manage.meeting_room_list_page import MeetingRoomListPage
 
 # 配置日志记录器
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-@pytest.fixture(scope="function")
-def browser_page():
-    # 连接到已打开的浏览器实例，方便调试
-    with sync_playwright() as playwright:
-        browser = playwright.chromium.connect_over_cdp("http://localhost:9222")
-        context = browser.contexts[0] if browser.contexts else browser.new_context()
-        page = context.pages[0] if context.pages else context.new_page()
-        page.set_default_timeout(3000)  # 设置默认超时时间为 5000 毫秒
-        yield page
-        # page.close()
-        # context.close()
-        # browser.close()
-    """
-    为每个测试用例提供浏览器页面实例，测试结束后关闭浏览器。
-    """
+# @pytest.fixture(scope="function")
+# def page():
+#     # 连接到已打开的浏览器实例，方便调试
+#     with sync_playwright() as playwright:
+#         browser = playwright.chromium.connect_over_cdp("http://localhost:9222")
+#         context = browser.contexts[0] if browser.contexts else browser.new_context()
+#         page = context.pages[0] if context.pages else context.new_page()
+#         page.set_default_timeout(3000)  # 设置默认超时时间为 5000 毫秒
+#         yield page
+#         # page.close()
+#         # context.close()
+#         # browser.close()
+#     """
+#     为每个测试用例提供浏览器页面实例，测试结束后关闭浏览器。
+#     """
     # with sync_playwright() as p:
     #     browser = p.chromium.launch(headless=False)
     #     page = browser.new_page()
@@ -47,102 +56,54 @@ def browser_page():
 
 
 
+from playwright.sync_api import expect, sync_playwright
+import pytest
+import logging
+
+# 配置日志记录器
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+
+# @pytest.fixture(scope="function")
+# def page():
+#     with sync_playwright() as playwright:
+#         browser = playwright.chromium.connect_over_cdp("http://localhost:9222")
+#         context = browser.contexts[0] if browser.contexts else browser.new_context()
+#         page = context.pages[0] if context.pages else context.new_page()
+#         page.set_default_timeout(3000)  # 设置默认超时时间为 3000 毫秒
+#         yield page
 
 
-def test_add_meeting_room(browser_page, need_approval=True, need_time_limit=True):
-    """
-    测试添加会议室功能。
-    """
-    page = browser_page
-    # 点击添加会议室按钮
-    page.get_by_role("button", name="新建").click()  # 替换为实际按钮选择器
-    logging.info("点击了添加会议室按钮")
-    # 输入会议室信息
-    page.get_by_placeholder('不超过10个字').fill('会议室009')
-    logging.info("输入了会议室信息: 会议室009")
-    # 输入会议室编号
-    page.get_by_placeholder("请输入,如HYS10-506").fill('HYS10-506')
-    logging.info("输入了会议室编号: HYS10-506")
-    # 输入会议室容量
-    page.get_by_role("spinbutton").first.fill("10")
-    logging.info("输入了会议室容量: 10")
-    # 输入会议室位置
-    page.get_by_placeholder("不超过30个字").first.fill("天王巷")
-    logging.info("输入了会议室位置: 天王巷")
-    # 选择会议室状态
-    page.get_by_placeholder("请选择").first.click()
-    room_status_li = page.locator("li").filter(has_text="正常")
-    room_status_li.wait_for(state="visible")
-    room_status_li.click()
-    logging.info("选择了会议室状态: 正常")
-    # 选择设备
-    page.get_by_text("投影仪").click()
-    logging.info("选择了设备: 投影仪")
-    # 选择管理部门
-    page.get_by_placeholder("请选择").nth(1).click()
-    org_item1 = page.get_by_role("menuitem", name="集成公司").get_by_role("radio")
-    org_item1.click()
-    org_item2 = page.get_by_role("menuitem", name="省DICT研发中心").get_by_role("radio")
-    org_item2.click()
-    org_item3 = page.get_by_role("menuitem", name="项目管理办公室").get_by_role("radio")
-    org_item3.click()
-    page.mouse.click(x=10, y=10)  # 点击空白处
-    logging.info("选择了管理部门: 集成公司, 省DICT研发中心, 项目管理办公室")
-    # 选择管理人
-    page.get_by_placeholder("请选择").nth(2).click()
-    manager_item3 = page.get_by_role("menuitem", name="张超/15357703370")
-    manager_item3.click()
-    page.mouse.click(x=10, y=10)  # 点击空白处
-    logging.info("选择了管理人: 张超/15357703370")
-    # 输入相关描述
-    page.get_by_role("textbox", name="请输入", exact=True).fill("会议室很大，能容纳很多人")
-    if need_approval:
-        # 打开审批开关
-        page.locator("(//div[@role='switch'])[1]").click()
-        page.get_by_placeholder("请选择").nth(3).click()
-        approval_item3 = page.get_by_role("menuitem", name="张超/15357703370").nth(1)
-        approval_item3.click()
-        page.mouse.click(x=10, y=10)  # 点击空白处
-        logging.info("打开了审批开关，并选择了审批人: 张超/15357703370")
-    if need_time_limit:
-        # 打开时间限制开关
-        page.locator("(//div[@role='switch'])[2]").click()
-        element = page.get_by_placeholder("请选择").nth(4)
-        if element.is_visible():
-            element.click()
-            page.get_by_text("星期一").click()
-            page.mouse.click(x=10, y=10)  # 点击空白处
-        # 点击按钮，弹出选项
-        page.get_by_placeholder("开始时间").click()
-        start_hour_locator = page.locator("(//ul[@class='el-scrollbar__view el-time-spinner__list'])[1]/li").filter(has_text="08")
-        start_hour_locator.scroll_into_view_if_needed()
-        start_hour_locator.click()
-        start_minute_locator = page.locator("(//ul[@class='el-scrollbar__view el-time-spinner__list'])[2]/li").filter(has_text="30")
-        start_minute_locator.scroll_into_view_if_needed()
-        start_minute_locator.click()
-        end_hour_locator = page.locator("(//ul[@class='el-scrollbar__view el-time-spinner__list'])[4]/li").filter(has_text="10")
-        end_hour_locator.scroll_into_view_if_needed()
-        end_hour_locator.click()
-        end_minute_locator = page.locator("(//ul[@class='el-scrollbar__view el-time-spinner__list'])[5]/li").filter(has_text="30")
-        end_minute_locator.scroll_into_view_if_needed()
-        end_minute_locator.click()
-        # 输入单次可预约最长时间
-        page.locator("(//input[@placeholder='请输入'])[3]").fill("24")
-        logging.info("打开了时间限制开关，并设置了开始时间为08:30，结束时间为10:30，单次可预约最长时间为24小时")
-    # 选择可使用者
-    page.locator(".text_area").click()
-    page.get_by_label("请选择部门和人员").get_by_text("集成公司").click()
-    page.get_by_label("请选择部门和人员").get_by_text("省DICT研发中心").click()
-    page.get_by_label("请选择部门和人员").get_by_text("项目管理办公室").click()
-    page.locator("//span[text()='张超']/../../label").click()
-    page.get_by_role("button", name="确 定").click()
-    logging.info("选择了可使用者: 集成公司, 省DICT研发中心, 项目管理办公室, 张超")
-    # 点击提交按钮
-    page.get_by_role("button", name="提交").click()
-    logging.info("点击了提交按钮")
-    # 断言页面出现了添加成功字样的提示信息
-    expect(page.get_by_text("操作成功")).to_be_visible()
-    logging.info("验证了添加成功的提示信息")
+
+class TestAddMeetingRoom(BaseCase):
+
+    @pytest.mark.parametrize(
+        "room_name, room_code, capacity, location, status, devices, departments, manager, need_approval, approval_person, need_time_limit, start_time, end_time, max_duration, users",
+        [
+            ("会议室009", "HYS10-506", "10", "天王巷", "正常", ["投影仪"], ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", True, "张超/15357703370", True, "08:30", "10:30", "24", ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"]),
+            ("会议室010", "HYS10-507", "20", "天王巷2号", "正常", ["投影仪", "白板"], ["集成公司", "省DICT研发中心"], "李华/15357703371", False, None, False, None, None, None, ["集成公司", "省DICT研发中心", "李华"]),
+            # 添加更多测试数据集
+        ]
+    )
+    @allure.step("测试新增会议室")
+    def test_add_meeting_room(self, page, room_name, room_code, capacity, location, status, devices, departments, manager, need_approval, approval_person, need_time_limit, start_time, end_time, max_duration, users):
+        meeting_room_list_page = MeetingRoomListPage(page)
+        meeting_room_info_page = meeting_room_list_page.click_add_button()
+        # 录入表单信息
+        meeting_room_info_page.fill_room_name(room_name)
+        meeting_room_info_page.fill_room_code(room_code)
+        meeting_room_info_page.fill_capacity(capacity)
+        meeting_room_info_page.fill_location(location)
+        meeting_room_info_page.select_room_status(status)
+        meeting_room_info_page.select_devices(devices)
+        meeting_room_info_page.select_departments(departments)
+        meeting_room_info_page.select_manager(manager)
+        meeting_room_info_page.fill_description(f"{room_name} 很大，能容纳很多人")
+        meeting_room_info_page.toggle_approval(need_approval, approval_person)
+        meeting_room_info_page.toggle_time_limit(need_time_limit, start_time, end_time, max_duration)
+        meeting_room_info_page.select_users(users)
+        meeting_room_info_page.click_submit_button()
+        meeting_room_info_page.verify_success_message()
+
 
 
 # def test_delete_meeting_room(browser_page):
