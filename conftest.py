@@ -36,15 +36,17 @@ def logged_in_page(page: Page):
     login_page.fill_captcha("1")
     login_page.click_login()
 
-    # 等待新标签页打开
-    with page.expect_popup() as popup_info:
-        home_page = HomePage(page).click_meeting_room_manage_icon()
+    home_page = HomePage(login_page.page)
+    page = home_page.get_meeting_room_manage_page()
+    # # 等待新标签页打开
+    # with page.expect_popup() as popup_info:
+    #     home_page = HomePage(page).click_meeting_room_manage_icon()
+    #
+    # # 获取新打开的标签页
+    # new_page = popup_info.value
 
-    # 获取新打开的标签页
-    new_page = popup_info.value
-
-    # 切换到新标签页
-    page = new_page
+    # # 切换到新标签页
+    # page = new_page
 
 
     page.wait_for_timeout(2000)

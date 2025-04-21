@@ -35,5 +35,4 @@ class LoginPage:
         # 获取错误信息
         return self.page.locator(".error-message").text_content()
 
-    # 登录操作
 

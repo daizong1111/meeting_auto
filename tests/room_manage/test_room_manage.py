@@ -17,6 +17,8 @@ import allure
 
 from base_case import BaseCase
 from pages.meeting_room_manage.meeting_room_list_page import MeetingRoomListPage
+# 显式引入测试夹具
+from conftest import logged_in_page
 
 # 配置日志记录器
 # logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -85,15 +87,14 @@ class TestAddMeetingRoom(BaseCase):
         ]
     )
     @allure.step("测试新增会议室")
-    def test_add_meeting_room(self, page, room_name, room_code, capacity, location, status, devices, departments, manager, need_approval, approval_person, need_time_limit, start_time, end_time, max_duration, users):
-        meeting_room_list_page = MeetingRoomListPage(page)
-        meeting_room_info_page = meeting_room_list_page.click_add_button()
-        # 录入表单信息
+    def test_add_meeting_room(self, logged_in_page, room_name, room_code, capacity, location, status, devices, departments, manager, need_approval, approval_person, need_time_limit, start_time, end_time, max_duration, users):
+        meeting_room_list_page = MeetingRoomListPage(logged_in_page)
+        meeting_room_info_page = meeting_room_list_page.click_add_button()       
         meeting_room_info_page.fill_room_name(room_name)
         meeting_room_info_page.fill_room_code(room_code)
         meeting_room_info_page.fill_capacity(capacity)
         meeting_room_info_page.fill_location(location)
-        meeting_room_info_page.select_room_status(status)
+        meeting_room_info_page.select_room_statuss(status)
         meeting_room_info_page.select_devices(devices)
         meeting_room_info_page.select_departments(departments)
         meeting_room_info_page.select_manager(manager)
