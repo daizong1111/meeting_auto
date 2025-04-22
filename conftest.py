@@ -12,13 +12,14 @@ def playwright() -> Playwright:
 
 
 # page fixture，用于每条测试用例单独打开浏览器
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="module")
 def page(playwright):
     logging.info("Starting browser...")
     browser = playwright.chromium.launch(headless=False)  # 启动浏览器
     logging.info("Browser started.")
     context = browser.new_context()  # 创建新的浏览器上下文
-    page = context.new_page()  # 打开新页面
+    page = context.new_page() # 打开新页面
+    page.set_default_timeout(30000)
     yield page
     page.close()  # 关闭页面
     browser.close()  # 关闭浏览器
@@ -27,7 +28,7 @@ def page(playwright):
 
 
 # 登录的前置操作
-@pytest.fixture(scope="function")
+@pytest.fixture(scope="module")
 def logged_in_page(page: Page):
     login_page = LoginPage(page)
     login_page.goto()
@@ -36,8 +37,8 @@ def logged_in_page(page: Page):
     login_page.fill_captcha("1")
     login_page.click_login()
 
-    home_page = HomePage(login_page.page)
-    page = home_page.get_meeting_room_manage_page()
+    # home_page = HomePage(login_page.page)
+    # page = home_page.get_meeting_room_manage_page()
     # # 等待新标签页打开
     # with page.expect_popup() as popup_info:
     #     home_page = HomePage(page).click_meeting_room_manage_icon()
@@ -48,6 +49,16 @@ def logged_in_page(page: Page):
     # # 切换到新标签页
     # page = new_page
 
+    login_page.page.wait_for_timeout(2000)
+    yield login_page
 
-    page.wait_for_timeout(2000)
+@pytest.fixture(scope="class")
+def meeting_manage_page(logged_in_page):
+    home_page = HomePage(logged_in_page.page)
+    page = home_page.get_meeting_room_manage_page()
     yield page
+
+@pytest.fixture(scope="class")
+def switch_to_meeting_manage(meeting_manage_page):
+    meeting_manage_page.locator("//span[text()='会议室管理']").click()
+    yield meeting_manage_page

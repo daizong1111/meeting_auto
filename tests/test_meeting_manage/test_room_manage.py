@@ -18,7 +18,7 @@ import allure
 from base_case import BaseCase
 from pages.meeting_room_manage.meeting_room_list_page import MeetingRoomListPage
 # 显式引入测试夹具
-from conftest import logged_in_page
+from conftest import *
 
 # 配置日志记录器
 # logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -75,26 +75,26 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 #         yield page
 
 
-
+@pytest.mark.usefixtures("switch_to_meeting_manage")  # 显式声明夹具
 class TestAddMeetingRoom(BaseCase):
 
     @pytest.mark.parametrize(
         "room_name, room_code, capacity, location, status, devices, departments, manager, need_approval, approval_person, need_time_limit, start_time, end_time, max_duration, users",
         [
             ("会议室009", "HYS10-506", "10", "天王巷", "正常", ["投影仪"], ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", True, "张超/15357703370", True, "08:30", "10:30", "24", ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"]),
-            ("会议室010", "HYS10-507", "20", "天王巷2号", "正常", ["投影仪", "白板"], ["集成公司", "省DICT研发中心"], "李华/15357703371", False, None, False, None, None, None, ["集成公司", "省DICT研发中心", "李华"]),
+            ("会议室010", "HYS10-507", "20", "天王巷2号", "正常", ["投影仪", "白板"], ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", False, None, False, None, None, None, ["集成公司", "省DICT研发中心", "李华"]),
             # 添加更多测试数据集
         ]
     )
     @allure.step("测试新增会议室")
-    def test_add_meeting_room(self, logged_in_page, room_name, room_code, capacity, location, status, devices, departments, manager, need_approval, approval_person, need_time_limit, start_time, end_time, max_duration, users):
-        meeting_room_list_page = MeetingRoomListPage(logged_in_page)
+    def test_add_meeting_room(self, switch_to_meeting_manage, room_name, room_code, capacity, location, status, devices, departments, manager, need_approval, approval_person, need_time_limit, start_time, end_time, max_duration, users):
+        meeting_room_list_page = MeetingRoomListPage(switch_to_meeting_manage)
         meeting_room_info_page = meeting_room_list_page.click_add_button()       
         meeting_room_info_page.fill_room_name(room_name)
         meeting_room_info_page.fill_room_code(room_code)
         meeting_room_info_page.fill_capacity(capacity)
         meeting_room_info_page.fill_location(location)
-        meeting_room_info_page.select_room_statuss(status)
+        meeting_room_info_page.select_room_status(status)
         meeting_room_info_page.select_devices(devices)
         meeting_room_info_page.select_departments(departments)
         meeting_room_info_page.select_manager(manager)

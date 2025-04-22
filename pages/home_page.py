@@ -7,7 +7,7 @@ class HomePage:
 
     def get_meeting_room_manage_icon(self):
 
-        return self.page.locator("div:nth-child(8) > img")
+        return self.page.locator("(//div[normalize-space()='新会议管理'])[1]")
         # return self.page.locator(r"//div[@class='application-content']/div[8]")
 
     def click_meeting_room_manage_icon(self):
