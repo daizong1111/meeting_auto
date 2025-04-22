@@ -8,7 +8,7 @@ def run_tests():
                    '--alluredir=allure-results',
                    # 执行指定的用例文件(不写则执行所有的用例)
                    # 'tests/test_user_settings.py',
-                   'tests/test_meeting_manage/test_meeting_manage.py::TestAddMeetingRoom::test_add_meeting_room'
+                   'tests/test_meeting_manage/test_room_manage.py::TestAddMeetingRoom::test_add_meeting_room'
                    ]
     # 运行 pytest
     pytest.main(pytest_args)
