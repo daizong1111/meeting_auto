@@ -54,3 +54,11 @@ def meeting_room_manage_page(meeting_manage_page):
     #     meeting_manage_page.locator("//ul[@role=’menubar‘]/div[3]").click()
     # except Exception as e:
     #     logging.error(f"清理逻辑执行失败: {e}")
+
+
+
+# 测试编辑功能的前置操作，保证表格中一定有数据
+@pytest.fixture(scope="function")
+def meeting_room_manage_edit_pre(meeting_room_manage_page):
+    meeting_manage_page.locator("//ul[@role='menubar']/div[3]").click()
+    yield meeting_manage_page
