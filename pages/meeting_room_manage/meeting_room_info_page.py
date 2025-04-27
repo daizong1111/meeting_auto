@@ -252,12 +252,12 @@ class MeetingRoomInfoPage:
 
     def verify_success_message(self): \
             # 断言操作成功字样在页面出现
-        self.page.get_by_text("操作成功").wait_for()
+        self.page.get_by_text("操作成功").wait_for(timeout=5000)
         assert self.page.get_by_text("操作成功").is_visible()
         # assert self.page.get_by_text("操作成功").is_visible()
         # logging.info("验证了添加成功的提示信息")
 
     def verify_error_miss_message(self):
-        self.page.get_by_text("*必填项不能为空").wait_for()
+        self.page.get_by_text("*必填项不能为空").wait_for(timeout=5000)
         assert self.page.get_by_text("*必填项不能为空").is_visible()
         # logging.info("验证了添加失败的提示信息")

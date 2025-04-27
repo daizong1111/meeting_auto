@@ -11,7 +11,7 @@ import logging
 import allure
 
 from base_case import BaseCase
-from pages.meeting_room_manage.meeting_room_manage_page import MeetingRoomManagePage
+from pages.meeting_room_manage.meeting_room_manage_page import MeetingRoomManagePageBase
 
 # 配置日志记录器
 # logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -24,16 +24,17 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-# @pytest.fixture(scope="function")
-# def meeting_room_manage_page():
-#     with sync_playwright() as playwright:
-#         # browser = playwright.chromium.connect_over_cdp("http://localhost:9222")
-#         browser = playwright.chromium.connect_over_cdp("http://127.0.0.1:9222")
-#         context = browser.contexts[0] if browser.contexts else browser.new_context()
-#         page = context.pages[0] if context.pages else context.new_page()
-#         page.set_default_timeout(3000)  # 设置默认超时时间为 3000 毫秒
-#         page.locator("//ul[@role='menubar']/div[3]").click()
-#         yield page
+@pytest.fixture(scope="function")
+def meeting_room_manage_page():
+    with sync_playwright() as playwright:
+        # browser = playwright.chromium.connect_over_cdp("http://localhost:9222")
+        browser = playwright.chromium.connect_over_cdp("http://127.0.0.1:9222")
+        context = browser.contexts[0] if browser.contexts else browser.new_context()
+        page = context.pages[0] if context.pages else context.new_page()
+        page.set_default_timeout(3000)  # 设置默认超时时间为 3000 毫秒
+        page.locator("//ul[@role='menubar']/div[3]").click()
+        page = MeetingRoomManagePageBase(page)
+        yield page
 
 
 @pytest.mark.usefixtures("meeting_room_manage_page")  # 显式声明夹具
@@ -48,54 +49,54 @@ class TestAddMeetingRoom(BaseCase):
              "张超/15357703370", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], True),
-            (None, "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+            ("", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-容纳人数", "HYS10-506", None, "天王巷", "正常", ["投影仪"],
+            ("新增-失败-必填项为空-容纳人数", "HYS10-506", "", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-会议室位置", "HYS10-506", "10", None, "正常", ["投影仪"],
+            ("新增-失败-必填项为空-会议室位置", "HYS10-506", "10", "", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-会议室状态", "HYS10-506", "10", "天王巷", None, ["投影仪"],
+            ("新增-失败-必填项为空-会议室状态", "HYS10-506", "10", "天王巷", "", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-会议室设备", "HYS10-506", "10", "天王巷", "正常", None,
+            ("新增-失败-必填项为空-会议室设备", "HYS10-506", "10", "天王巷", "正常", "",
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
             ("新增-失败-必填项为空-管理部门和管理人和审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             None, None, "会议室很大，能容纳很多人", True, None, True,
+             "", "", "会议室很大，能容纳很多人", True, "", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
             ("新增-失败-必填项为空-管理人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], None, "会议室很大，能容纳很多人", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
             ("新增-失败-必填项为空-审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             None, True,
+             "", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
             ("新增-失败-必填项为空-可预约的时间范围", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
-             None, "08:30", "10:30", "24",
+             "", "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
             ("新增-失败-必填项为空-单次可预约最长时间", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", None,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False)
 
             # 添加更多测试数据集
@@ -114,13 +115,13 @@ class TestAddMeetingRoom(BaseCase):
         #      ]
     )
     @allure.step("测试新增会议室")
-    def test_add_meeting_room(self, meeting_room_manage_page: object, room_name: object, room_code: object, capacity: object, location: object, status: object,
+    def test_add_meeting_room(self, meeting_room_manage_page, room_name: object, room_code: object, capacity: object, location: object, status: object,
                               devices: object,
                               departments: object, manager: object, description: object, need_approval: object, approval_person: object,
                               need_time_limit: object,
                               days: object,
                               start_time: object,
-                              end_time: object, max_duration: object, users: object, is_positive: object) -> None:
+                              end_time: object, max_duration: object, users: object, is_positive: object):
         # meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
         meeting_room_info_page = meeting_room_manage_page.click_add_button()
         meeting_room_info_page.fill_room_name(room_name)
@@ -290,12 +291,14 @@ class TestQueryMeetingRoom:
         [
             ("新增-成功", "10", "投影仪", "正常", "天王巷", "是", ["集成公司", "省DICT研发中心", "项目管理办公室"],
              "张超"),
+            # 未做空值处理，有bug
+            # ("", "", "", "", "", "", "",
+            #  ""),
             # ("新增-成功", "10", "投影仪", "正常", "天王巷", "是", ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超")
         ]
     )
-    def test_query_meeting_room(self, meeting_room_manage_page, room, capacity, device, status, location, approval,
+    def test_query_meeting_room(self, meeting_room_manage_page, db_connection, room, capacity, device, status, location, approval,
                                 departments, manager):
-        meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
         # 输入查询条件
         # meeting_room_manage_page.input_room(room)
         # meeting_room_manage_page.input_capacity(capacity)
@@ -307,25 +310,31 @@ class TestQueryMeetingRoom:
         # meeting_room_manage_page.input_manager(manager)
         # # 点击查询按钮
         # meeting_room_manage_page.click_query_button()
-        # # 等待查询结果加载
-        # meeting_room_manage_page.page.wait_for_timeout(2000)  # 等待 2 秒
+        # 等待查询结果加载
+        meeting_room_manage_page.page.wait_for_timeout(2000)  # 等待 2 秒
 
-        pages_data = meeting_room_manage_page.get_table_data(meeting_room_manage_page.page)
+        pages_data, pages_data_count = meeting_room_manage_page.get_table_data()
+        # pages_data = []
 
         # 从数据库中提取数据
-        db_data = meeting_room_manage_page.get_db_data(room, capacity, device, status, location, approval, departments,
-                                                       manager)
+        db_data = meeting_room_manage_page.get_db_data(db_connection, query= """
+                SELECT * from user
+                """)
 
         # 比较两个数据集
-        assert meeting_room_manage_page.compare_data(pages_data, db_data), "页面数据与数据库数据不一致"
+        assert meeting_room_manage_page.compare_data(pages_data, db_data, ['Host', 'User', 'Select_priv']), "页面数据与数据库数据不一致"
 
 class TestDeleteMeetingRoom:
     def test_delete_meeting_room(self, meeting_room_manage_page):
-        meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
+        count_pre = meeting_room_manage_page.get_table_rows().count()
         meeting_room_manage_page.click_delete_button()
-        meeting_room_manage_page.verify_delete_success_message()
+        count_after = meeting_room_manage_page.get_table_rows().count()
+        meeting_room_manage_page.verify_delete_success_message(count_pre, count_after)
 
     def test_delete_meeting_room_cancel(self, meeting_room_manage_page):
-        meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
+        # 点击删除按钮之前，表格中的行数
+        count_pre = meeting_room_manage_page.get_table_rows().count()
         meeting_room_manage_page.click_delete_button_cancel()
-        meeting_room_manage_page.verify_delete_cancel_message()
+        # 点击删除按钮之后，表格中的行数
+        count_after = meeting_room_manage_page.get_table_rows().count()
+        meeting_room_manage_page.verify_delete_cancel_message(count_pre, count_after)

@@ -1,9 +1,12 @@
 from pages.meeting_room_manage.meeting_room_info_page import MeetingRoomInfoPage
 import mysql.connector
 
+from pages.base_query_page import BaseQueryPage
 
-class MeetingRoomManagePage:
+
+class MeetingRoomManagePageBase(BaseQueryPage):
     def __init__(self, page):
+        super().__init__(page)
         self.page = page
 
     def get_add_button(self):
@@ -136,71 +139,17 @@ class MeetingRoomManagePage:
         self.get_delete_button().evaluate("(element) => element.click()")
         self.page.get_by_role("button", name="取消").click()
 
-    def verify_delete_success_message(self):
+    def verify_delete_success_message(self, count_pre, count_after):
         self.page.get_by_role("alert").get_by_text("删除成功").wait_for()
-        assert self.page.get_by_role("alert").get_by_text("删除成功").is_visible()
+        assert self.page.get_by_role("alert").get_by_text("删除成功").is_visible() and count_pre - 1 == count_after
 
-    def verify_delete_cancel_message(self):
+    def verify_delete_cancel_message(self, count_pre, count_after):
         # 等待“删除成功”消息消失
         delete_success_message = self.page.get_by_role("alert").get_by_text("删除成功")
-        delete_success_message.wait_for(state='hidden')
-        assert not self.page.get_by_role("alert").get_by_text("删除成功").is_visible()
+        delete_success_message.wait_for(state='hidden', timeout=7000)
+        assert not self.page.get_by_role("alert").get_by_text("删除成功").is_visible() and count_pre == count_after
 
     def get_table_rows(self):
         return self.page.locator("(//table[@class='el-table__body'])[1]/tbody/tr")
 
-    def get_table_data(self):
-        table_rows = self.get_table_rows()
-        data = []
-        while True:
-            for row in table_rows.all():
-                columns = row.locator("td")
-                row_data = [column.inner_text() for column in columns.all()[:-1]]
-                data.append(row_data)
-            if self.get_next_button().is_enabled():
-                self.click_next_button()
-            else:
-                break
-        return data
 
-    def get_db_data(self, room, capacity, device, status, location, approval, departments, manager):
-        # 连接到数据库
-        db_config = {
-            "host": "localhost",
-            "user": "your_username",
-            "password": "your_password",
-            "database": "your_database"
-        }
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor(dictionary=True)
-
-        # 构建 SQL 查询
-        query = """
-        SELECT room_name, room_code, capacity, device, status, location, approval, departments, manager
-        FROM meeting_rooms
-        WHERE room_name = %s AND capacity = %s AND device = %s AND status = %s AND location = %s AND approval = %s AND departments = %s AND manager = %s
-        """
-        cursor.execute(query, (room, capacity, device, status, location, approval, departments, manager))
-        db_data = cursor.fetchall()
-
-        # 关闭连接
-        cursor.close()
-        connection.close()
-
-        return db_data
-
-    def compare_data(self, page_data, db_data):
-        # 将数据库数据转换为列表
-        db_list = [
-            [row['room_name'], row['room_code'], str(row['capacity']), row['device'], row['status'], row['location'],
-             row['approval'], row['departments'], row['manager']] for row in db_data]
-
-        # 比较两个数据集
-        if page_data == db_list:
-            print("数据一致，测试通过")
-            return True
-        else:
-            print("数据不一致，测试不通过")
-            print("页面数据:", page_data)
-            print("数据库数据:", db_list)
-            return False

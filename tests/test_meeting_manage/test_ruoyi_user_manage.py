@@ -11,7 +11,7 @@ import logging
 import allure
 
 from base_case import BaseCase
-from pages.meeting_room_manage.meeting_room_manage_page import MeetingRoomManagePage
+from pages.meeting_room_manage.meeting_room_manage_page import MeetingRoomManagePageBase
 
 # 配置日志记录器
 # logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
