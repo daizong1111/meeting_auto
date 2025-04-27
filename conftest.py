@@ -4,6 +4,10 @@ from pages.login_page import LoginPage
 from pages.home_page import HomePage
 import logging
 
+from pages.meeting_room_manage.meeting_room_manage_page import MeetingRoomManagePage
+from tests.test_meeting_manage.test_room_manage import TestAddMeetingRoom
+
+
 # 定义Playwright fixture，用于初始化Playwright实例
 @pytest.fixture(scope="session")
 def playwright() -> Playwright:
@@ -47,6 +51,7 @@ def meeting_manage_page(home_page):
 @pytest.fixture(scope="function")
 def meeting_room_manage_page(meeting_manage_page):
     # meeting_manage_page.locator("//span[text()='会议室管理']").click()
+    # 点击会议室管理菜单项
     meeting_manage_page.locator("//ul[@role='menubar']/div[3]").click()
     yield meeting_manage_page
     # # 清理逻辑：确保返回到会议室管理首页
@@ -60,5 +65,14 @@ def meeting_room_manage_page(meeting_manage_page):
 # 测试编辑功能的前置操作，保证表格中一定有数据
 @pytest.fixture(scope="function")
 def meeting_room_manage_edit_pre(meeting_room_manage_page):
-    meeting_manage_page.locator("//ul[@role='menubar']/div[3]").click()
-    yield meeting_manage_page
+    # 点击会议室管理菜单项
+    meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
+    rows_count = meeting_room_manage_page.get_table_rows().count()
+    if rows_count == 0:
+        test_add_meeting_room = TestAddMeetingRoom()
+        test_add_meeting_room.test_add_meeting_room(meeting_room_manage_page, "新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
+             "张超/15357703370", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], True)
+    yield meeting_room_manage_page

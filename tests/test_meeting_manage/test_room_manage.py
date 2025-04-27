@@ -24,16 +24,16 @@ import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 
-@pytest.fixture(scope="function")
-def meeting_room_manage_page():
-    with sync_playwright() as playwright:
-        # browser = playwright.chromium.connect_over_cdp("http://localhost:9222")
-        browser = playwright.chromium.connect_over_cdp("http://127.0.0.1:9222")
-        context = browser.contexts[0] if browser.contexts else browser.new_context()
-        page = context.pages[0] if context.pages else context.new_page()
-        page.set_default_timeout(3000)  # 设置默认超时时间为 3000 毫秒
-        page.locator("//ul[@role='menubar']/div[3]").click()
-        yield page
+# @pytest.fixture(scope="function")
+# def meeting_room_manage_page():
+#     with sync_playwright() as playwright:
+#         # browser = playwright.chromium.connect_over_cdp("http://localhost:9222")
+#         browser = playwright.chromium.connect_over_cdp("http://127.0.0.1:9222")
+#         context = browser.contexts[0] if browser.contexts else browser.new_context()
+#         page = context.pages[0] if context.pages else context.new_page()
+#         page.set_default_timeout(3000)  # 设置默认超时时间为 3000 毫秒
+#         page.locator("//ul[@role='menubar']/div[3]").click()
+#         yield page
 
 
 @pytest.mark.usefixtures("meeting_room_manage_page")  # 显式声明夹具
@@ -43,11 +43,6 @@ class TestAddMeetingRoom(BaseCase):
         "room_name, room_code, capacity, location, status, devices, departments, manager, description, need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users, is_positive",
 
         [
-            # ("", "", "", "", "", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-            #  "张超/15357703370", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], True),
             ("新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
              "张超/15357703370", True,
@@ -119,11 +114,14 @@ class TestAddMeetingRoom(BaseCase):
         #      ]
     )
     @allure.step("测试新增会议室")
-    def test_add_meeting_room(self, meeting_room_manage_page, room_name, room_code, capacity, location, status, devices,
-                              departments, manager, description, need_approval, approval_person, need_time_limit, days,
-                              start_time,
-                              end_time, max_duration, users, is_positive):
-        meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
+    def test_add_meeting_room(self, meeting_room_manage_page: object, room_name: object, room_code: object, capacity: object, location: object, status: object,
+                              devices: object,
+                              departments: object, manager: object, description: object, need_approval: object, approval_person: object,
+                              need_time_limit: object,
+                              days: object,
+                              start_time: object,
+                              end_time: object, max_duration: object, users: object, is_positive: object) -> None:
+        # meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
         meeting_room_info_page = meeting_room_manage_page.click_add_button()
         meeting_room_info_page.fill_room_name(room_name)
         meeting_room_info_page.fill_room_code(room_code)
@@ -146,7 +144,35 @@ class TestAddMeetingRoom(BaseCase):
 
 @pytest.mark.usefixtures("meeting_room_manage_page")  # 显式声明夹具
 class TestEditMeetingRoom(BaseCase):
-
+    # @pytest.fixture(autouse=True)
+    # def setup_method(self, meeting_room_manage_page):
+    #     # 使用夹具获取page对象
+    #     page = self.meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
+    #     rows_count = self.meeting_room_manage_page.get_table_rows().count()
+    #
+    #     if rows_count == 0:
+    #         test_add_meeting_room_instance = TestAddMeetingRoom()
+    #         test_add_meeting_room_instance.test_add_meeting_room(
+    #             page,
+    #             room_name="新增-成功",
+    #             room_code="HYS10-506",
+    #             capacity="10",
+    #             location="天王巷",
+    #             status="正常",
+    #             devices=["投影仪"],
+    #             departments=["集成公司", "省DICT研发中心", "项目管理办公室"],
+    #             manager="张超/15357703370",
+    #             description="会议室很大，能容纳很多人",
+    #             need_approval=True,
+    #             approval_person="张超/15357703370",
+    #             need_time_limit=True,
+    #             days=["星期一", "星期二", "星期三"],
+    #             start_time="08:30",
+    #             end_time="10:30",
+    #             max_duration="24",
+    #             users=["集成公司", "省DICT研发中心", "项目管理办公室", "张超"],
+    #             is_positive=True
+    #         )
     @pytest.mark.parametrize(
         "room_name, room_code, capacity, location, status, devices, departments, manager, description, need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users, is_positive",
 
@@ -227,17 +253,18 @@ class TestEditMeetingRoom(BaseCase):
         #      ]
     )
     @allure.step("测试修改会议室")
-    def test_edit_meeting_room(self, meeting_room_manage_page, room_name, room_code, capacity, location, status,
+    def test_edit_meeting_room(self, meeting_room_manage_edit_pre, room_name, room_code, capacity, location, status,
                                devices,
                                departments, manager, description, need_approval, approval_person, need_time_limit, days,
                                start_time,
                                end_time, max_duration, users, is_positive):
-        meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
-        meeting_room_manage_page.click_edit_button()
+
+        # meeting_room_manage_page = MeetingRoomManagePage(meeting_room_manage_page)
+        meeting_room_info_page = meeting_room_manage_edit_pre.click_edit_button()
 
         # # 若当前页面无编辑按钮，则先执行一条新增操作
 
-        meeting_room_info_page = meeting_room_manage_page.click_edit_button()
+        # meeting_room_info_page = meeting_room_manage_page.click_edit_button()
         meeting_room_info_page.fill_room_name(room_name)
         meeting_room_info_page.fill_room_code(room_code)
         meeting_room_info_page.fill_capacity(capacity)

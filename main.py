@@ -12,9 +12,9 @@ def run_tests():
                    # 'tests/test_user_settings.py',
                    # 'tests/test_meeting_manage/test_room_manage.py::TestAddMeetingRoom::test_add_meeting_room',
                    # 'tests/test_meeting_manage/test_room_manage.py::TestDeleteMeetingRoom',
-                   # 'tests/test_meeting_manage/test_room_manage.py::TestEditMeetingRoom::test_edit_meeting_room',
+                   'tests/test_meeting_manage/test_room_manage.py::TestEditMeetingRoom::test_edit_meeting_room',
                    # 'tests/test_meeting_manage/test_room_manage.py::TestQueryMeetingRoom::test_query_meeting_room'
-                   'tests/test_meeting_manage/test_ruoyi_user_manage.py::TestQueryUsers::test_query_users',
+                   # 'tests/test_meeting_manage/test_ruoyi_user_manage.py::TestQueryUsers::test_query_users',
 
                    ]
     # 运行 pytest
