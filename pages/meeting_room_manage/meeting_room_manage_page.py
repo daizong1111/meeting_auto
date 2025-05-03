@@ -1,6 +1,4 @@
 from pages.meeting_room_manage.meeting_room_info_page import MeetingRoomInfoPage
-import mysql.connector
-
 from pages.base_query_page import BaseQueryPage
 
 
@@ -41,6 +39,10 @@ class MeetingRoomManagePageBase(BaseQueryPage):
     def choose_device(self, device):
         if device is None:
             return
+        if device == "":
+            # 清空选择框
+            self.get_device_input().evaluate("element => element.value = ''")
+            return
         self.get_device_input().click()
         self.get_device_span(device).click()
 
@@ -53,6 +55,10 @@ class MeetingRoomManagePageBase(BaseQueryPage):
 
     def choose_status(self, status):
         if status is None:
+            return
+        if status == "":
+            # 清空选择框内容
+            self.get_status_input().evaluate("element => element.value=''")
             return
         self.get_status_input().click()
         self.get_status_span(status).wait_for(state='visible')
@@ -76,6 +82,10 @@ class MeetingRoomManagePageBase(BaseQueryPage):
     def choose_approval(self, approval):
         if approval is None:
             return
+        if approval == "":
+            # 清空选择框内容
+            self.get_approval_input().evaluate("element => element.value = ''")
+            return
         self.get_approval_input().click()
         self.get_approval_span(approval).click()
 
@@ -87,6 +97,9 @@ class MeetingRoomManagePageBase(BaseQueryPage):
 
     def choose_department(self, departments):
         if departments is None:
+            return
+        if departments == "":
+            self.get_department_input().evaluate("element => element.value = ''")
             return
         self.get_department_input().click()
         for department in departments:

@@ -12,7 +12,7 @@ class BaseCase:
     console_handler.setFormatter(formatter)
     logger.addHandler(console_handler)
 
-    # @allure.step("执行测试步骤: {step_name}")
+    @allure.step("执行测试步骤: {step_name}")
     def log_step(self, step_name: str):
         """记录测试步骤并生成 Allure 步骤信息"""
         self.logger.info(f"执行测试步骤: {step_name}")
