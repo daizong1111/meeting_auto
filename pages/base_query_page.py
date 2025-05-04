@@ -1,26 +1,40 @@
 # 数据库中的数据可能有datetime类型的，需要做处理
+from abc import abstractmethod
 from datetime import datetime
 from playwright.sync_api import expect
-
 
 class BaseQueryPage:
     def __init__(self, page):
         self.page = page
 
+    @abstractmethod
     def get_first_page_button(self):
-        return self.page.locator('//li[text()=1]')
+        pass
+
+    @abstractmethod
+    def get_next_button(self):
+        pass
+
+    def click_next_button(self):
+        if self.get_next_button().is_visible():
+            self.get_next_button().click()
+            # 等待表格更新，但是这段代码在1.40.0的playwright中似乎不支持
+            expect(self.get_table_rows()).to_have_count(count_gt=0)
+
+
+    @abstractmethod
+    def get_table_rows(self):
+        pass
 
     def extract_table_data(self):
-        # 此处，我采用二重循环遍历的方式来获取表格中的所有数据，是否有更快的方式？
         data = []
         total_rows_count = 0
 
         while True:
-            for row in self.get_table_rows().all():
-                columns = row.locator("td")
-                row_data = [column.inner_text() for column in columns.all()[:-1]]
-                data.append(row_data)
-            total_rows_count += self.get_table_rows().count()
+            # 此处，使用列表推导式进行了优化，避免使用双重for循环
+            rows = self.get_table_rows().all()
+            data.extend([row.locator("td").all_text_contents()[:-1] for row in rows])
+            total_rows_count += len(rows)
 
             if self.get_next_button().is_enabled():
                 self.click_next_button()
@@ -28,6 +42,7 @@ class BaseQueryPage:
                 break
 
         return data, total_rows_count
+
     def get_table_data(self):
         # 处理查询结果列表为空的情况
         if self._is_table_empty():
@@ -81,15 +96,6 @@ class BaseQueryPage:
             print("数据库数据:", db_list)
             return False
 
-    def get_next_button(self):
-        return self.page.locator("//button[text()='下一页']")  # 或使用更合适的定位符表达式
-    def click_next_button(self):
-        self.get_next_button().click()
-        # 等待表格更新，但是这段代码在1.40.0的playwright中似乎不支持
-        expect(self.get_table_rows()).to_have_count(gt=0)
-
-    def get_table_rows(self):
-        return self.page.locator("//tbody/tr")
 
 
 

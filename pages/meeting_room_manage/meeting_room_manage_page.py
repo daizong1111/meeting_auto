@@ -57,9 +57,13 @@ class MeetingRoomManagePageBase(BaseQueryPage):
         if status is None:
             return
         if status == "":
+            # 此处似乎不能直接清空，直接清空后下次选状态会选不上
             # 清空选择框内容
             self.get_status_input().evaluate("element => element.value=''")
             return
+        # 先清空内容，再选择
+        # 此处似乎不能直接清空，直接清空后下次选状态会选不上
+        self.get_status_input().evaluate("element => element.value=''")
         self.get_status_input().click()
         self.get_status_span(status).wait_for(state='visible')
         self.get_status_span(status).click()
@@ -165,4 +169,11 @@ class MeetingRoomManagePageBase(BaseQueryPage):
     def get_table_rows(self):
         return self.page.locator("(//table[@class='el-table__body'])[1]/tbody/tr")
 
+    def get_first_page_button(self):
+        return self.page.locator('//li[text()=1]')
 
+    def get_next_button(self):
+        return self.page.locator("//button[@class='btn-next']")  # 或使用更合适的定位符表达式
+
+    def get_table_rows(self):
+        return self.page.locator('(//table[@class="el-table__body"])[1]/tbody/tr')
