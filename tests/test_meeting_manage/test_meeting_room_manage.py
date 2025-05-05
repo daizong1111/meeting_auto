@@ -295,6 +295,9 @@ class TestQueryMeetingRoom(BaseCase):
              ""),
             ("使用接口新建会议室", "12", "电视", "正常", "天王巷6楼", "全部", ["集成公司", "综合业务中心"],
              "龚存志"),
+            # ("业务场景", "", "", "", "", "", "",
+            #  ""),
+
         ]
     )
     def test_query_meeting_room(self, meeting_room_manage_page, db_connection, room, capacity, device, status, location,

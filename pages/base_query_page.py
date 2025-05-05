@@ -38,6 +38,8 @@ class BaseQueryPage:
 
             if self.get_next_button().is_enabled():
                 self.click_next_button()
+                # 等待1秒，让表格内容刷新
+                self.page.wait_for_timeout(1000)
             else:
                 break
 
@@ -49,6 +51,8 @@ class BaseQueryPage:
             return [], 0
         # 将当前页置为第一页
         self.get_first_page_button().click()
+        # 强制等待一秒，使表格内容更新
+        self.page.wait_for_timeout(1000)
         # 遍历所有的页，提取表格中的数据到列表中
         return self.extract_table_data()
 
@@ -94,6 +98,8 @@ class BaseQueryPage:
             print("数据不一致，测试不通过")
             print("页面数据:", page_data)
             print("数据库数据:", db_list)
+            print("页面数据条数:", len(page_data))
+            print("数据库数据条数", len(db_list))
             return False
 
 

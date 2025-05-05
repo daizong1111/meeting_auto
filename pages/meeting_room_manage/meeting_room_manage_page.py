@@ -53,17 +53,23 @@ class MeetingRoomManagePageBase(BaseQueryPage):
         # return self.page.get_by_role("menuitem", name=f"{status}")
         return self.page.locator(f"//li[contains(@class, 'el-select-dropdown__item')]/span[text()='{status}']")
 
+    def get_status_close_button(self):
+        return self.page.locator("//i[@class='el-select__caret el-input__icon el-icon-circle-close']")
     def choose_status(self, status):
         if status is None:
             return
         if status == "":
-            # 此处似乎不能直接清空，直接清空后下次选状态会选不上
-            # 清空选择框内容
-            self.get_status_input().evaluate("element => element.value=''")
+            # 此处似乎不能直接清空，直接清空后下次选状态会选不上。采用了替代方案
+            # 将鼠标悬停
+            self.get_status_input().hover()
+            # 若状态选择框中已经有内容，那么叉号图标必然可见，点击它，清空内容
+            if self.get_status_close_button().is_visible():
+                self.get_status_close_button().click()
+            # self.get_status_input().evaluate("element => element.value=''")
             return
         # 先清空内容，再选择
         # 此处似乎不能直接清空，直接清空后下次选状态会选不上
-        self.get_status_input().evaluate("element => element.value=''")
+        # self.get_status_input().evaluate("element => element.value=''")
         self.get_status_input().click()
         self.get_status_span(status).wait_for(state='visible')
         self.get_status_span(status).click()
