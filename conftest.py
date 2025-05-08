@@ -63,10 +63,11 @@ def meeting_room_manage_page(meeting_manage_page):
 def db_connection():
    # 创建数据库连接
    db_config = {
-       "host": "localhost",
+       "host": "134.84.202.60",
+       "port": "53306",
        "user": "root",
-       "password": "SDZ1t3o5m9916",
-       "database": "mysql"
+       "password": "Djmysqltest@2023",
+       "database": "smartwork_meeting"
    }
    connection = mysql.connector.connect(**db_config)
    yield connection  # 返回连接对象
@@ -84,8 +85,8 @@ def meeting_room_manage_edit_pre(meeting_room_manage_page):
         # 新增一条数据
         test_add_meeting_room = TestAddMeetingRoom()
         test_add_meeting_room.test_add_meeting_room(meeting_room_manage_page, "新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], True)
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True)
     yield meeting_room_manage_page

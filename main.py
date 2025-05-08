@@ -8,6 +8,7 @@ def run_tests():
     # 构建 pytest 参数
     pytest_args = ['-v',
                    '--alluredir=allure-results',
+
                    # 执行指定的用例文件(不写则执行所有的用例)
                    # 'tests/test_user_settings.py',
                    # 'tests/test_meeting_manage/test_meeting_room_manage.py',

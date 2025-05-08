@@ -44,60 +44,100 @@ class TestAddMeetingRoom(BaseCase):
         "room_name, room_code, capacity, location, status, devices, departments, manager, description, need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users, is_positive",
 
         [
-            ("新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+            # ("新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            ("新增-成功3", "HYS10-507", "20", "天王巷", "维修中", ["白板"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "李四/19999999817", "会议室很大，能容纳很多人", True,
+             "李四/19999999817", True,
+             ["星期一"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            ("新增-成功4", "HYS10-508", "30", "三孝口", "暂时关闭", ["无纸化设备"],
+             ["集成公司", "省DICT研发中心", "技术架构团队"], "陈伟/18110988875", "会议室很大，能容纳很多人", True,
+             "陈伟/18110988875", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], True),
-            ("", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-容纳人数", "HYS10-506", "", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-会议室位置", "HYS10-506", "10", "", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-会议室状态", "HYS10-506", "10", "天王巷", "", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-会议室设备", "HYS10-506", "10", "天王巷", "正常", "",
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-管理部门和管理人和审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             "", "", "会议室很大，能容纳很多人", True, "", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-管理人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-可预约的时间范围", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
-             "", "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
-            ("新增-失败-必填项为空-单次可预约最长时间", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
-             ["星期一", "星期二", "星期三"], "08:30", "10:30", "",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False)
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            ("新增-成功5", "HYS10-509", "40", "五里墩", "暂时关闭", ["视频"],
+             ["集成公司", "省DICT研发中心", "综合业务中心"], "李韬/18105602573", "会议室很大，能容纳很多人", True,
+             "李韬/18105602573", True,
+             ["星期二"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            ("新增-成功6", "HYS10-510", "50", "一里井", "暂时关闭", ["白板"],
+             ["集成公司", "省DICT研发中心", "综合业务中心"], "李韬/18105602573", "会议室很大，能容纳很多人", True,
+             "李韬/18105602573", True,
+             ["星期二"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            ("新增-成功7", "HYS10-511", "60", "二人巷", "正常", ["桌子"],
+             ["集成公司", "省DICT研发中心", "综合业务中心"], "张杰/13162890525", "会议室很大，能容纳很多人", True,
+             "张杰/13162890525", True,
+             ["星期二"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            ("新增-成功8", "HYS10-512", "70", "福禄园", "维修中", ["电视"],
+             ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
+             "李锋/18158870952", True,
+             ["星期二"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            ("新增-成功9", "HYS10-513", "80", "长寿街", "暂时关闭", ["电视"],
+             ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
+             "李锋/18158870952", True,
+             ["星期二"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            ("新增-成功10", "HYS10-514", "90", "诸葛庐", "正常", ["桌子"],
+             ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
+             "李锋/18158870952", True,
+             ["星期二"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # ("", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-容纳人数", "HYS10-506", "", "天王巷", "正常", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-会议室位置", "HYS10-506", "10", "", "正常", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-会议室状态", "HYS10-506", "10", "天王巷", "", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-会议室设备", "HYS10-506", "10", "天王巷", "正常", "",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-管理部门和管理人和审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+            #  "", "", "会议室很大，能容纳很多人", True, "", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-管理人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-可预约的时间范围", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  "", "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            # ("新增-失败-必填项为空-单次可预约最长时间", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+            #  "刘富豪/17356523872", True,
+            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False)
 
             # 添加更多测试数据集
         ],
@@ -173,59 +213,59 @@ class TestEditMeetingRoom(BaseCase):
              "", "", "", "",
              "", False),
             ("修改-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], True),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
             ("", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-容纳人数", "HYS10-506", "", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-会议室位置", "HYS10-506", "10", "", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-会议室状态", "HYS10-506", "10", "天王巷", "", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-会议室设备", "HYS10-506", "10", "天王巷", "正常", "",
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-管理部门和管理人和审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              "", "", "会议室很大，能容纳很多人", True, "", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-管理人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
              "", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-可预约的时间范围", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              "", "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False),
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             ("编辑-失败-必填项为空-单次可预约最长时间", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "张超/15357703370", "会议室很大，能容纳很多人", True,
-             "张超/15357703370", True,
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "张超"], False)
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False)
 
             # 添加更多测试数据集
         ],
@@ -285,19 +325,145 @@ class TestEditMeetingRoom(BaseCase):
             self.log_step("验证新增失败")
 
 
+def get_department_ids(db_connection, department_names):
+    """
+    根据部门名称列表获取对应的部门 ID 列表。
+    """
+    if not department_names or not isinstance(department_names, list):
+        return []
+
+    # 构造参数化 SQL 查询
+    placeholders = "%s"
+    sql = f"""
+        SELECT dept_id 
+        FROM sys_dept 
+        WHERE dept_name IN ({placeholders}) AND status = '0' AND del_flag = '0'
+    """
+
+    # 使用参数化查询防止 SQL 注入
+    results = db_connection.execute_query(sql, params=department_names[-1])
+    dept_ids = [row["dept_id"] for row in results]
+    return dept_ids
+
+
+def build_meeting_room_sql(room=None, capacity=None, device=None, status=None,
+                           location=None, approval=None, dept_ids=None, manager=None):
+    """
+    根据给定参数动态生成会议室查询 SQL。
+    """
+    # sql = """
+    #     SELECT mr.id, mr.name, mr.number, mr.capacity, mr.facility, mr.state,
+    #            sdd.dict_label AS stateName, mr.enable_approve, mr.location,
+    #            sd.dept_id AS managementId, sd.dept_name AS managementName,
+    #            su1.phonenumber AS managerPhone, su1.nick_name AS managerName,
+    #            su2.phonenumber AS operatorPhone, su2.nick_name AS operatorName,
+    #            mr.update_time AS operate_time
+    #     FROM meeting_room mr
+    #     LEFT JOIN sys_dept sd ON mr.management = sd.dept_id AND sd.status = '0' AND sd.del_flag = '0'
+    #     LEFT JOIN sys_user su1 ON mr.manager = su1.user_id AND su1.status = '0' AND su1.del_flag = '0'
+    #     LEFT JOIN sys_user su2 ON mr.update_by = su2.user_name AND su2.status = '0' AND su2.del_flag = '0'
+    #     LEFT JOIN sys_dict_data sdd ON mr.state = sdd.dict_value AND sdd.status = '0' AND sdd.dict_type = 'meeting_room_state'
+    #     WHERE mr.del_flag = '0'
+    # """
+
+    sql = """
+            SELECT mr.id, mr.name, mr.number, mr.capacity, mr.facility, mr.state, 
+                   sdd.dict_label AS stateName, mr.enable_approve, mr.location, 
+                   sd.dept_id AS managementId, sd.dept_name AS managementName, 
+                   su1.phonenumber AS managerPhone, su1.nick_name AS managerName, 
+                   su2.phonenumber AS operatorPhone, su2.nick_name AS operatorName, 
+                   mr.update_time AS operate_time
+            FROM (SELECT * FROM meeting_room WHERE del_flag=0
+            
+        """
+
+    conditions = []
+    params = {}
+
+    if room:
+        conditions.append("AND (name LIKE %(room)s OR number LIKE %(room)s)")
+        params["room"] = f"%{room}%"
+
+    if capacity is not None and capacity.strip():
+        conditions.append("AND capacity >= %(capacity)s")
+        params["capacity"] = capacity
+
+    if device:
+        conditions.append("AND facility LIKE %(device)s")
+        params["device"] = f"%{device}%"
+
+    if status:
+        if status == "全部":
+            pass
+        if status == "正常":
+            conditions.append("AND state = 0")
+        if status == "维修中":
+            conditions.append("AND state = 1")
+        if status == "暂时关闭":
+            conditions.append("AND state = 2")
+
+    if location:
+        conditions.append("AND location LIKE %(location)s")
+        params["location"] = f"%{location}%"
+
+    if approval:
+        # 假设 "是" 表示启用审批，即 enable_approve = 1；"否" 为 0；"全部" 不加条件
+        if approval == "是":
+            conditions.append("AND enable_approve = 1")
+        elif approval == "否":
+            conditions.append("AND enable_approve = 0")
+
+    if dept_ids != "" and dept_ids != [] and isinstance(dept_ids, list):
+        placeholders = ','.join(str(int(dept_id)) for dept_id in dept_ids)
+        conditions.append(f"AND management IN ({placeholders})")
+
+    # if manager:
+    #     conditions.append("AND su1.nick_name LIKE %(manager)s")
+    #     params["manager"] = f"%{manager}%"
+
+
+
+    sql += " " + " ".join(conditions)
+    sql += ') as mr '
+    sql += """LEFT JOIN (SELECT * FROM sys_dept WHERE status='0' AND del_flag='0') as sd ON mr.management=sd.dept_id
+            LEFT JOIN (SELECT * FROM sys_user WHERE status='0' AND del_flag='0') as su1 ON mr.manager=su1.user_id
+            LEFT JOIN (SELECT * FROM sys_user WHERE status='0' AND del_flag='0') as su2 ON mr.update_by=su2.user_name
+            LEFT JOIN (SELECT * FROM sys_dict_data WHERE status='0' AND dict_type='meeting_room_state') as sdd ON mr.state=sdd.dict_value
+            """
+    sql += """ WHERE 1=1 """
+
+    if manager:
+        params["manager"] = f"%{manager}%"
+        sql +="""AND su1.nick_name LIKE %(manager)s"""
+
+    sql += " ORDER BY mr.create_time DESC;"
+
+    return sql, params
+
+
 class TestQueryMeetingRoom(BaseCase):
+
     @pytest.mark.parametrize(
         "room, capacity, device, status, location, approval, departments, manager",
         [
-            ("新增-成功", "10", "投影仪", "正常", "天王巷", "是", ["集成公司", "省DICT研发中心", "项目管理办公室"],
-             "张超"),
-            ("21231", "", "", "", "", "", "",
+            ("新增-成功", "", "", "", "", "", "",
              ""),
-            ("使用接口新建会议室", "12", "电视", "正常", "天王巷6楼", "全部", ["集成公司", "综合业务中心"],
-             "龚存志"),
-            # ("业务场景", "", "", "", "", "", "",
-            #  ""),
-
+            ("", "50", "", "", "", "", "",
+             ""),
+            ("", "", "电视", "", "", "", "",
+             ""),
+            ("", "", "", "维修中", "", "", "",
+             ""),
+            ("", "", "", "", "天王巷", "", "",
+             ""),
+            ("", "", "", "", "", "否", "",
+             ""),
+            ("", "", "", "", "", "", ["集成公司", "省DICT研发中心", "项目管理办公室"],
+             ""),
+            ("", "", "", "", "", "", "",
+             "张杰"),
+            ("新增-成功", "60", "白板", "正常", "天王巷", "全部", ["集成公司", "省DICT研发中心", "产品需求团队"],
+             "刘汪汉"),
         ]
     )
     def test_query_meeting_room(self, meeting_room_manage_page, db_connection, room, capacity, device, status, location,
@@ -328,17 +494,35 @@ class TestQueryMeetingRoom(BaseCase):
         self.log_step("等待查询结果加载")
         pages_data, pages_data_count = meeting_room_manage_page.get_table_data()
         self.log_step("获取表格数据")
-        # pages_data = []
 
+        # 获取部门 ID 列表
+        if departments and departments != "" and isinstance(departments, list):
+            # 构造参数化 SQL 查询
+            sql = "SELECT dept_id FROM sys_dept WHERE dept_name = %(dept_name)s AND status = '0' AND del_flag = '0'"
+            # params = {"dept_name": "集成公司"}
+            db_data_dept_ids = meeting_room_manage_page.get_db_data(db_connection, query=sql,
+                                                                    params={"dept_name": departments[-1]})
+            dept_ids = [row["dept_id"] for row in db_data_dept_ids]
+        else:
+            dept_ids = []
+
+        # 构建 SQL 查询
+        sql, params = build_meeting_room_sql(room=room, capacity=capacity, device=device, status=status,
+                                             location=location, approval=approval, dept_ids=dept_ids,
+                                             manager=manager)
+
+        db_data = meeting_room_manage_page.get_db_data(db_connection, query=sql, params=params)
         # 从数据库中提取数据
-        db_data = meeting_room_manage_page.get_db_data(db_connection, query="""
-                SELECT * from user
-                """)
+        # db_data = meeting_room_manage_page.get_db_data(db_connection, query="""
+        #         select * from meeting_room;
+        #         """)
         self.log_step("从数据库中提取数据")
 
         # 比较两个数据集
-        assert meeting_room_manage_page.compare_data(pages_data, db_data,['Host', 'User', 'Select_priv']), "页面数据与数据库数据不一致"
+        assert meeting_room_manage_page.compare_data(pages_data, db_data,
+                                                     ['name', 'number', 'capacity', 'facility', 'stateName', 'enable_approve','location', 'managementName', 'managerName','operatorName','operate_time']), "页面数据与数据库数据不一致"
         self.log_step("比较两个数据集")
+        meeting_room_manage_page.click_reset_btn()
 
 
 class TestDeleteMeetingRoom(BaseCase):

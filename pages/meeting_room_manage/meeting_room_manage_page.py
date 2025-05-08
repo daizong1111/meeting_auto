@@ -36,12 +36,17 @@ class MeetingRoomManagePageBase(BaseQueryPage):
     def get_device_span(self, device):
         return self.page.locator(f"//span[text()='{device}']")
 
+    def get_device_close_button(self):
+        return self.page.locator("(//input[@placeholder='请选择'])[1]/following-sibling::span/span/i[@class='el-select__caret el-input__icon el-icon-circle-close']")
     def choose_device(self, device):
         if device is None:
             return
         if device == "":
+            self.get_device_input().click()
+            if self.get_device_close_button().is_visible():
+                self.get_device_close_button().click()
             # 清空选择框
-            self.get_device_input().evaluate("element => element.value = ''")
+            # self.get_device_input().evaluate("element => element.value = ''")
             return
         self.get_device_input().click()
         self.get_device_span(device).click()
@@ -54,14 +59,14 @@ class MeetingRoomManagePageBase(BaseQueryPage):
         return self.page.locator(f"//li[contains(@class, 'el-select-dropdown__item')]/span[text()='{status}']")
 
     def get_status_close_button(self):
-        return self.page.locator("//i[@class='el-select__caret el-input__icon el-icon-circle-close']")
+        return self.page.locator("(//input[@placeholder='请选择'])[2]/following-sibling::span/span/i[@class='el-select__caret el-input__icon el-icon-circle-close']")
     def choose_status(self, status):
         if status is None:
             return
         if status == "":
             # 此处似乎不能直接清空，直接清空后下次选状态会选不上。采用了替代方案
             # 将鼠标悬停
-            self.get_status_input().hover()
+            self.get_status_input().click()
             # 若状态选择框中已经有内容，那么叉号图标必然可见，点击它，清空内容
             if self.get_status_close_button().is_visible():
                 self.get_status_close_button().click()
@@ -105,11 +110,17 @@ class MeetingRoomManagePageBase(BaseQueryPage):
     def get_department_label(self, department):
         return self.page.locator(f"//span[text()='{department}']/preceding-sibling::label")
 
+    def get_department_close_button(self):
+        return self.page.locator("(//input[@placeholder='请选择'])[4]/following-sibling::span/span/i[@class='el-input__icon el-icon-circle-close']")
     def choose_department(self, departments):
         if departments is None:
             return
         if departments == "":
-            self.get_department_input().evaluate("element => element.value = ''")
+            self.get_department_input().click()
+            if self.get_department_close_button().is_visible():
+                self.get_department_close_button().click()
+            self.page.mouse.click(x=10, y=10)
+            # self.get_department_input().evaluate("element => element.value = ''")
             return
         self.get_department_input().click()
         for department in departments:
@@ -183,3 +194,9 @@ class MeetingRoomManagePageBase(BaseQueryPage):
 
     def get_table_rows(self):
         return self.page.locator('(//table[@class="el-table__body"])[1]/tbody/tr')
+
+    def get_reset_btn(self):
+        return self.page.locator("//span[text()=' 重置']")
+
+    def click_reset_btn(self):
+        self.get_reset_btn().click()

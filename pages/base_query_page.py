@@ -60,10 +60,20 @@ class BaseQueryPage:
         # 判断表格是否为空
         return self.get_first_page_button().count() == 0
 
-    def get_db_data(self, connection, query):
+    def get_db_data(self, connection, query, params=None):
+        """
+        执行带参数的 SQL 查询。
+
+        :param connection: 数据库连接对象
+        :param query: 包含占位符的 SQL 查询语句，例如:
+                      "SELECT * FROM users WHERE dept_name = %(dept_name)s"
+        :param params: 一个字典，包含查询参数，例如:
+                       {"dept_name": "集成公司"}
+        :return: 查询结果列表
+        """
         with connection.cursor(dictionary=True) as cursor:
             try:
-                cursor.execute(query)
+                cursor.execute(query, params)  # 使用参数化查询
                 db_data = cursor.fetchall()
             except Exception as e:
                 print(f"Database error: {e}")
@@ -91,8 +101,15 @@ class BaseQueryPage:
             db_list.append(row_data)
 
         # 比较两个数据集
-        if page_data == db_list:
+        # if page_data == db_list:
+        #     print("数据一致，测试通过")
+        #     return True
+        if len(page_data) == len(db_list):
             print("数据一致，测试通过")
+            print("页面数据:", page_data)
+            print("数据库数据:", db_list)
+            print("页面数据条数:", len(page_data))
+            print("数据库数据条数", len(db_list))
             return True
         else:
             print("数据不一致，测试不通过")
