@@ -7,11 +7,26 @@ class MeetingRoomInfoPage:
     def click_add_meeting_room_button(self):
         self.page.get_by_role("button", name="新建").click()
 
+
+    def get_room_name(self):
+        return self.page.get_by_placeholder('不超过10个字').input_value()
+
     def fill_room_name(self, room_name):
         if room_name is None:
             return
-
         self.page.get_by_placeholder('不超过10个字').fill(room_name)
+
+    def fill_room_name_by_press(self, room_name):
+        if room_name is None:
+            return
+
+        locator = self.page.get_by_placeholder('不超过10个字')
+        locator.click()
+        locator.clear()
+        locator.press_sequentially(str(room_name), delay=10)
+
+    def get_room_code(self):
+        return self.page.get_by_placeholder("请输入,如HYS10-506").input_value()
 
     def fill_room_code(self, room_code):
         if room_code is None:
@@ -19,17 +34,50 @@ class MeetingRoomInfoPage:
 
         self.page.get_by_placeholder("请输入,如HYS10-506").fill(room_code)
 
+    def fill_room_code_by_press(self, room_code):
+        if room_code is None:
+            return
+
+        locator = self.page.get_by_placeholder("请输入,如HYS10-506")
+        locator.click()
+        locator.clear()
+        locator.press_sequentially(str(room_code), delay=10)
+
     def fill_capacity(self, capacity):
         if capacity is None:
             return
 
         self.page.get_by_role("spinbutton").first.fill(capacity)
 
+    def fill_capacity_by_press(self, capacity):
+        if capacity is None:
+            return
+
+        locator = self.page.get_by_role("spinbutton").first
+        locator.click()
+        locator.clear()
+        locator.press_sequentially(str(capacity), delay=10)
+
+    def get_capacity(self):
+        return self.page.get_by_role("spinbutton").first.input_value()
+
     def fill_location(self, location):
         if location is None:
             return
 
         self.page.get_by_placeholder("不超过30个字").first.fill(location)
+
+    def fill_location_by_press(self, location):
+        if location is None:
+            return
+
+        locator = self.page.get_by_placeholder("不超过30个字").first
+        locator.click()
+        locator.clear()
+        locator.press_sequentially(str(location), delay=10)
+
+    def get_location(self):
+        return self.page.get_by_placeholder("不超过30个字").first.input_value()
 
     def select_room_status(self, status):
         if status is None:
@@ -49,8 +97,9 @@ class MeetingRoomInfoPage:
         if devices == "":
             # 遍历所有被选中选项，点击它们，取消勾选
             choose_devices_item = self.page.locator("(//div[@class='el-form-item__content'])[6]/div/span[contains(@class,'equipment_checked')]").all()
-            for device_item in choose_devices_item:
-                device_item.evaluate("(element) => element.click()")
+            # 列表的长度会发生变化，每次点击列表头部的元素
+            for i in range(len(choose_devices_item)):
+                choose_devices_item[0].evaluate("(element) => element.click()")
             return
         if not isinstance(devices, (list, tuple, set)):
             raise TypeError("devices必须是一个可迭代对象（如列表、元组或集合）")
@@ -96,6 +145,19 @@ class MeetingRoomInfoPage:
         if description is None:
             return
         self.page.get_by_role("textbox", name="请输入", exact=True).fill(description)
+
+    def fill_description_by_press(self, description):
+        if description is None:
+            return
+
+        locator = self.page.get_by_role("textbox", name="请输入", exact=True)
+        locator.click()
+        locator.clear()
+        locator.press_sequentially(str(description), delay=10)
+
+    def get_description(self):
+        return self.page.get_by_role("textbox", name="请输入", exact=True).input_value()
+
 
     # 选择完管理部门后，在选择审批人时，默认只能选择该部门下的人员
     def toggle_approval(self, need_approval_switch, approval_person):
@@ -210,6 +272,15 @@ class MeetingRoomInfoPage:
             if max_duration is not None:
                 self.page.locator("(//input[@placeholder='请输入'])[3]").fill(max_duration)
 
+
+    def fill_max_duration_by_press(self, max_duration):
+        duration_locator = self.page.locator("(//input[@placeholder='请输入'])[3]")
+        duration_locator.click()
+        duration_locator.clear()
+        duration_locator.press_sequentially(str(max_duration), delay=10)
+    def get_max_duration(self):
+        return self.page.locator("(//input[@placeholder='请输入'])[3]").input_value()
+
     def select_users(self, users):
         if users is None:
             return
@@ -230,12 +301,22 @@ class MeetingRoomInfoPage:
     def click_submit_button(self):
         self.page.get_by_role("button", name="提交").click()
 
-    def verify_success_message(self): \
+    def verify_add_success_message(self, count_pre, count_after): \
         # 断言操作成功字样在页面出现
         self.page.get_by_text("操作成功").wait_for(timeout=5000)
-        assert self.page.get_by_text("操作成功").is_visible()
+        assert self.page.get_by_text("操作成功").is_visible() and count_after == count_pre + 1
 
-    def verify_error_miss_message(self):
+    def verify_edit_success_message(self, count): \
+        # 断言操作成功字样在页面出现
+        self.page.get_by_text("操作成功").wait_for(timeout=5000)
+        assert self.page.get_by_text("操作成功").is_visible() and count > 0
+
+    def verify_error_add_miss_message(self, count_pre, count_after):
+        # 断言*必填项不能为空在页面出现
+        self.page.get_by_text("*必填项不能为空").wait_for(timeout=5000)
+        assert self.page.get_by_text("*必填项不能为空").is_visible() and count_pre == count_after
+
+    def verify_error_edit_miss_message(self):
         # 断言*必填项不能为空在页面出现
         self.page.get_by_text("*必填项不能为空").wait_for(timeout=5000)
         assert self.page.get_by_text("*必填项不能为空").is_visible()

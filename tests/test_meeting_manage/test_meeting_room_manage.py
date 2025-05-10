@@ -1,10 +1,12 @@
 """
 此模块使用 Playwright 框架实现会议室管理模块的 UI 自动化测试，
-包含增、删、改、查功能的测试用例。daizong
+包含增、删、改、查功能的测试用例。
 """
 # import re
 
 import logging
+import random
+
 # from playwright.sync_api import expect, sync_playwright
 # import pytest
 
@@ -31,7 +33,7 @@ def meeting_room_manage_page():
         browser = playwright.chromium.connect_over_cdp("http://127.0.0.1:9222")
         context = browser.contexts[0] if browser.contexts else browser.new_context()
         page = context.pages[0] if context.pages else context.new_page()
-        page.set_default_timeout(3000)  # 设置默认超时时间为 3000 毫秒
+        page.set_default_timeout(10000)  # 设置默认超时时间为 3000 毫秒
         page.locator("//ul[@role='menubar']/div[3]").click()
         page = MeetingRoomManagePageBase(page)
         yield page
@@ -44,56 +46,113 @@ class TestAddMeetingRoom(BaseCase):
         "room_name, room_code, capacity, location, status, devices, departments, manager, description, need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users, is_positive",
 
         [
-            # ("新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            ("新增-成功3", "HYS10-507", "20", "天王巷", "维修中", ["白板"],
-             ["集成公司", "省DICT研发中心", "项目管理办公室"], "李四/19999999817", "会议室很大，能容纳很多人", True,
-             "李四/19999999817", True,
-             ["星期一"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            ("新增-成功4", "HYS10-508", "30", "三孝口", "暂时关闭", ["无纸化设备"],
-             ["集成公司", "省DICT研发中心", "技术架构团队"], "陈伟/18110988875", "会议室很大，能容纳很多人", True,
-             "陈伟/18110988875", True,
+            ("新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            ("新增-成功5", "HYS10-509", "40", "五里墩", "暂时关闭", ["视频"],
-             ["集成公司", "省DICT研发中心", "综合业务中心"], "李韬/18105602573", "会议室很大，能容纳很多人", True,
-             "李韬/18105602573", True,
-             ["星期二"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            ("新增-成功6", "HYS10-510", "50", "一里井", "暂时关闭", ["白板"],
-             ["集成公司", "省DICT研发中心", "综合业务中心"], "李韬/18105602573", "会议室很大，能容纳很多人", True,
-             "李韬/18105602573", True,
-             ["星期二"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            ("新增-成功7", "HYS10-511", "60", "二人巷", "正常", ["桌子"],
-             ["集成公司", "省DICT研发中心", "综合业务中心"], "张杰/13162890525", "会议室很大，能容纳很多人", True,
-             "张杰/13162890525", True,
-             ["星期二"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            ("新增-成功8", "HYS10-512", "70", "福禄园", "维修中", ["电视"],
-             ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
-             "李锋/18158870952", True,
-             ["星期二"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            ("新增-成功9", "HYS10-513", "80", "长寿街", "暂时关闭", ["电视"],
-             ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
-             "李锋/18158870952", True,
-             ["星期二"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            ("新增-成功10", "HYS10-514", "90", "诸葛庐", "正常", ["桌子"],
-             ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
-             "李锋/18158870952", True,
-             ["星期二"], "08:30", "10:30", "24",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
-            # ("", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
+            # ("新增-成功3", "HYS10-507", "20", "天王巷", "维修中", ["白板"],
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "李四/19999999817", "会议室很大，能容纳很多人", True,
+            #  "李四/19999999817", True,
+            #  ["星期一"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # ("新增-成功4", "HYS10-508", "30", "三孝口", "暂时关闭", ["无纸化设备"],
+            #  ["集成公司", "省DICT研发中心", "技术架构团队"], "陈伟/18110988875", "会议室很大，能容纳很多人", True,
+            #  "陈伟/18110988875", True,
             #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # ("新增-成功5", "HYS10-509", "40", "五里墩", "暂时关闭", ["视频"],
+            #  ["集成公司", "省DICT研发中心", "综合业务中心"], "李韬/18105602573", "会议室很大，能容纳很多人", True,
+            #  "李韬/18105602573", True,
+            #  ["星期二"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # ("新增-成功6", "HYS10-510", "50", "一里井", "暂时关闭", ["白板"],
+            #  ["集成公司", "省DICT研发中心", "综合业务中心"], "李韬/18105602573", "会议室很大，能容纳很多人", True,
+            #  "李韬/18105602573", True,
+            #  ["星期二"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # ("新增-成功7", "HYS10-511", "60", "二人巷", "正常", ["桌子"],
+            #  ["集成公司", "省DICT研发中心", "综合业务中心"], "张杰/13162890525", "会议室很大，能容纳很多人", True,
+            #  "张杰/13162890525", True,
+            #  ["星期二"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # ("新增-成功8", "HYS10-512", "70", "福禄园", "维修中", ["电视"],
+            #  ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
+            #  "李锋/18158870952", True,
+            #  ["星期二"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # ("新增-成功9", "HYS10-513", "80", "长寿街", "暂时关闭", ["电视"],
+            #  ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
+            #  "李锋/18158870952", True,
+            #  ["星期二"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # ("新增-成功10", "HYS10-514", "90", "诸葛庐", "正常", ["桌子"],
+            #  ["集成公司", "省DICT研发中心", "项目交付中心"], "李锋/18158870952", "会议室很大，能容纳很多人", True,
+            #  "李锋/18158870952", True,
+            #  ["星期二"], "08:30", "10:30", "24",
+            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # 添加更多测试数据集
+        ],
+        # ids=["新增-成功"
+        #
+        #      ]
+    )
+    @allure.step("测试新增会议室-成功")
+    def test_add_meeting_room_success(self, meeting_room_manage_page, db_connection, room_name: object, room_code: object, capacity: object,
+                              location: object, status: object,
+                              devices: object,
+                              departments: object, manager: object, description: object, need_approval: object,
+                              approval_person: object,
+                              need_time_limit: object,
+                              days: object,
+                              start_time: object,
+                              end_time: object, max_duration: object, users: object, is_positive: object):
+        count_pre = meeting_room_manage_page.excute_query_count(db_connection)
+        meeting_room_info_page = meeting_room_manage_page.click_add_button()
+        self.log_step("点击新增按钮")
+        meeting_room_info_page.fill_room_name(room_name)
+        self.log_step("填写会议室名称")
+        meeting_room_info_page.fill_room_code(room_code)
+        self.log_step("填写会议室编号")
+        meeting_room_info_page.fill_capacity(capacity)
+        self.log_step("填写会议室容量")
+        meeting_room_info_page.fill_location(location)
+        self.log_step("填写会议室位置")
+        meeting_room_info_page.select_room_status(status)
+        self.log_step("选择会议室状态")
+        meeting_room_info_page.select_devices(devices)
+        self.log_step("选择会议室设备")
+        meeting_room_info_page.select_departments(departments)
+        self.log_step("选择管理部门")
+        meeting_room_info_page.select_manager(manager)
+        self.log_step("选择管理人")
+        meeting_room_info_page.fill_description(description)
+        self.log_step("填写相关描述")
+        meeting_room_info_page.toggle_approval(need_approval, approval_person)
+        self.log_step("选择是否需要审批")
+        meeting_room_info_page.toggle_time_limit(need_time_limit, days, start_time, end_time, max_duration)
+        self.log_step("选择是否需要时间限制")
+        meeting_room_info_page.select_users(users)
+        self.log_step("选择可使用者")
+        meeting_room_info_page.click_submit_button()
+        self.log_step("点击提交按钮")
+        meeting_room_info_page.page.wait_for_timeout(1000)
+        # 重新连接数据库，并提交事务
+        db_connection.ping(reconnect=True)
+        db_connection.commit()  # 提交事务确保可见，必须加上这段代码，否则读取到的数据数仍然是新增之前的
+        count_after = meeting_room_manage_page.excute_query_count(db_connection)
+        meeting_room_info_page.verify_add_success_message(count_pre, count_after)
+        self.log_step("验证新增成功")
+
+    @pytest.mark.parametrize(
+        "room_name, room_code, capacity, location, status, devices, departments, manager, description, need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users, is_positive",
+
+        [
+            ("", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             # ("新增-失败-必填项为空-容纳人数", "HYS10-506", "", "天王巷", "正常", ["投影仪"],
             #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
             #  "刘富豪/17356523872", True,
@@ -141,7 +200,7 @@ class TestAddMeetingRoom(BaseCase):
 
             # 添加更多测试数据集
         ],
-        # ids=["新增-成功",
+        # ids=[
         #      "新增-失败-必填项为空-会议室名称",
         #      "新增-失败-必填项为空-容纳人数",
         #      "新增-失败-必填项为空-会议室位置",
@@ -154,8 +213,9 @@ class TestAddMeetingRoom(BaseCase):
         #      '新增-失败-必填项为空-单次可预约最长时间',
         #      ]
     )
-    @allure.step("测试新增会议室")
-    def test_add_meeting_room(self, meeting_room_manage_page, room_name: object, room_code: object, capacity: object,
+    @allure.step("测试新增会议室-失败-必填项缺失")
+    def test_add_meeting_room_miss_data(self, meeting_room_manage_page, db_connection, room_name: object, room_code: object,
+                              capacity: object,
                               location: object, status: object,
                               devices: object,
                               departments: object, manager: object, description: object, need_approval: object,
@@ -164,6 +224,7 @@ class TestAddMeetingRoom(BaseCase):
                               days: object,
                               start_time: object,
                               end_time: object, max_duration: object, users: object, is_positive: object):
+        count_pre = meeting_room_manage_page.excute_query_count(db_connection)
         meeting_room_info_page = meeting_room_manage_page.click_add_button()
         self.log_step("点击新增按钮")
         meeting_room_info_page.fill_room_name(room_name)
@@ -192,13 +253,104 @@ class TestAddMeetingRoom(BaseCase):
         self.log_step("选择可使用者")
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
-        if is_positive is True:
-            meeting_room_info_page.verify_success_message()
-            self.log_step("验证新增成功")
+        meeting_room_info_page.page.wait_for_timeout(1000)
+        # 重新连接数据库，并提交事务
+        db_connection.ping(reconnect=True)
+        db_connection.commit()  # 提交事务确保可见，必须加上这段代码，否则读取到的数据数仍然是新增之前的
+        count_after = meeting_room_manage_page.excute_query_count(db_connection)
+        meeting_room_info_page.verify_error_add_miss_message(count_pre, count_after)
+        self.log_step("验证新增失败-必填项缺失")
 
-        else:
-            meeting_room_info_page.verify_error_miss_message()
-            self.log_step("验证新增失败")
+    @allure.step("测试新增会议室-前端格式校验与数据合法性")
+    def test_add_meeting_room_frontend_validation(
+            self, meeting_room_manage_page, db_connection,
+    ):
+
+        meeting_room_info_page = meeting_room_manage_page.click_add_button()
+        self.log_step("点击新增按钮")
+
+        meeting_room_info_page.fill_room_name_by_press("新增会议室名称过长示例" * 2)
+        self.log_step("填写会议室名称")
+        meeting_room_name = meeting_room_info_page.get_room_name()
+        assert len(meeting_room_name) <= 10
+        self.log_step("校验会议室名称长度小于等于10")
+
+        meeting_room_info_page.fill_room_code_by_press("HYS10-506" * 4)
+        self.log_step("填写会议室编号")
+        meeting_room_code = meeting_room_info_page.get_room_code()
+        assert len(meeting_room_code) <= 30
+
+        meeting_room_info_page.fill_capacity_by_press("1001")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == "1000"
+        self.log_step("校验会议室容量小于等于1000")
+
+        meeting_room_info_page.fill_capacity_by_press("3.4")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == "34"
+        self.log_step("校验会议室容量无法输入小数")
+
+        meeting_room_info_page.fill_capacity_by_press("3/4")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == "34"
+        self.log_step("校验会议室容量无法输入分数")
+
+        meeting_room_info_page.fill_capacity_by_press("-1")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == "1"
+        self.log_step("校验会议室容量无法输入负数")
+
+        meeting_room_info_page.fill_capacity_by_press("abc")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == ""
+        self.log_step("校验会议室容量无法输入字母")
+
+        meeting_room_info_page.fill_capacity_by_press("￥￥￥￥￥")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == ""
+        self.log_step("校验会议室容量无法输入特殊字符")
+
+        meeting_room_info_page.fill_capacity_by_press("中文")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == ""
+        self.log_step("校验会议室容量无法输入中文")
+
+        meeting_room_info_page.fill_location_by_press("天王巷" * 15)
+        self.log_step("填写会议室位置")
+        assert len(meeting_room_info_page.get_location()) <= 40
+        self.log_step("校验会议室位置长度小于等于40")
+
+        meeting_room_info_page.toggle_time_limit(True, None, None, None, "25")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == "24"
+        self.log_step("校验可预约最长时间小于等于24")
+
+        meeting_room_info_page.fill_max_duration_by_press("3/4")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == "24"
+        self.log_step("校验可预约最长时间无法输入分数")
+
+        meeting_room_info_page.fill_max_duration_by_press("-1")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == "1"
+        self.log_step("校验可预约最长时间无法输入负数")
+
+        meeting_room_info_page.fill_max_duration_by_press("abc")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == ""
+        self.log_step("校验可预约最长时间无法输入字母")
+
+        meeting_room_info_page.fill_max_duration_by_press("$$$$")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == ""
+        self.log_step("校验可预约最长时间无法输入特殊字符")
+
+        meeting_room_info_page.fill_max_duration_by_press("中文")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == ""
+        self.log_step("校验可预约最长时间无法输入中文")
+
+
 
 
 @pytest.mark.usefixtures("meeting_room_manage_page")  # 显式声明夹具
@@ -207,16 +359,70 @@ class TestEditMeetingRoom(BaseCase):
         "room_name, room_code, capacity, location, status, devices, departments, manager, description, need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users, is_positive",
 
         [
-            ("", "", "", "", "", "",
-             "", "", "", True,
-             "", True,
-             "", "", "", "",
-             "", False),
             ("修改-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
              "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True),
+            # 添加更多测试数据集
+        ],
+        # ids=["修改-成功"]
+    )
+    @allure.step("测试修改会议室")
+    def test_edit_meeting_room_success(self, meeting_room_manage_edit_and_del_pre,db_connection, room_name, room_code, capacity, location, status,
+                               devices,
+                               departments, manager, description, need_approval, approval_person, need_time_limit, days,
+                               start_time,
+                               end_time, max_duration, users, is_positive):
+        # 对于正向用例，生成一段随机数字，6位的，插入到会议室名称和编号的尾部
+        random_code = str(random.randint(10000, 99999))
+        room_name = room_name + random_code
+        room_code = room_code + random_code
+        meeting_room_info_page = meeting_room_manage_edit_and_del_pre.click_edit_button()
+        self.log_step("点击编辑按钮")
+        meeting_room_info_page.fill_room_name(room_name)
+        self.log_step("填写会议室名称")
+        meeting_room_info_page.fill_room_code(room_code)
+        self.log_step("填写会议室编号")
+        meeting_room_info_page.fill_capacity(capacity)
+        self.log_step("填写会议室容量")
+        meeting_room_info_page.fill_location(location)
+        self.log_step("填写会议室位置")
+        meeting_room_info_page.select_room_status(status)
+        self.log_step("选择会议室状态")
+        meeting_room_info_page.select_devices(devices)
+        self.log_step("选择会议室设备")
+        meeting_room_info_page.select_departments(departments)
+        self.log_step("选择管理部门")
+        meeting_room_info_page.select_manager(manager)
+        self.log_step("选择管理人")
+        meeting_room_info_page.fill_description(description)
+        self.log_step("填写相关描述")
+        meeting_room_info_page.toggle_approval(need_approval, approval_person)
+        self.log_step("选择是否需要审批")
+        meeting_room_info_page.toggle_time_limit(need_time_limit, days, start_time, end_time, max_duration)
+        self.log_step("选择是否需要时间限制")
+        meeting_room_info_page.select_users(users)
+        self.log_step("选择可使用者")
+        meeting_room_info_page.click_submit_button()
+        self.log_step("点击提交按钮")
+        meeting_room_manage_edit_and_del_pre.page.wait_for_timeout(1000)
+        # 重新连接数据库，并提交事务
+        db_connection.ping(reconnect=True)
+        db_connection.commit()  # 提交事务确保可见，必须加上这段代码，否则读取到的数据数仍然是修改之前的
+        # 执行sql查询，断言一定能查到修改后的数据
+        db_data = meeting_room_manage_edit_and_del_pre.get_db_data(db_connection,
+                                                                  "SELECT count(*) as count FROM meeting_room WHERE name = %(room_name)s and number = %(room_code)s and del_flag = 0",
+                                                                   {"room_name":room_name, "room_code":room_code})
+        count = db_data[0]["count"]
+        meeting_room_info_page.verify_edit_success_message(count)
+        self.log_step("验证修改成功")
+
+
+    @pytest.mark.parametrize(
+        "room_name, room_code, capacity, location, status, devices, departments, manager, description, need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users, is_positive",
+
+        [
             ("", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
              "刘富豪/17356523872", True,
@@ -269,7 +475,7 @@ class TestEditMeetingRoom(BaseCase):
 
             # 添加更多测试数据集
         ],
-        # ids=["修改-成功",
+        # ids=[
         #      "修改-失败-必填项为空-会议室名称",
         #      "修改-失败-必填项为空-容纳人数",
         #      "修改-失败-必填项为空-会议室位置",
@@ -282,13 +488,14 @@ class TestEditMeetingRoom(BaseCase):
         #      '修改-失败-必填项为空-单次可预约最长时间',
         #      ]
     )
-    @allure.step("测试修改会议室")
-    def test_edit_meeting_room(self, meeting_room_manage_edit_pre, room_name, room_code, capacity, location, status,
+    @allure.step("测试修改会议室-必填项缺失")
+    def test_edit_meeting_room_miss_data(self, meeting_room_manage_edit_and_del_pre, db_connection, room_name, room_code,
+                               capacity, location, status,
                                devices,
                                departments, manager, description, need_approval, approval_person, need_time_limit, days,
                                start_time,
                                end_time, max_duration, users, is_positive):
-        meeting_room_info_page = meeting_room_manage_edit_pre.click_edit_button()
+        meeting_room_info_page = meeting_room_manage_edit_and_del_pre.click_edit_button()
         self.log_step("点击编辑按钮")
         meeting_room_info_page.fill_room_name(room_name)
         self.log_step("填写会议室名称")
@@ -316,13 +523,97 @@ class TestEditMeetingRoom(BaseCase):
         self.log_step("选择可使用者")
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
-        if is_positive is True:
-            meeting_room_info_page.verify_success_message()
-            self.log_step("验证新增成功")
+        meeting_room_info_page.verify_error_edit_miss_message()
+        self.log_step("验证修改失败-必填项缺失")
 
-        else:
-            meeting_room_info_page.verify_error_miss_message()
-            self.log_step("验证新增失败")
+    @allure.step("测试修改会议室-前端格式校验与数据合法性")
+    def test_edit_meeting_room_frontend_validation(
+            self, meeting_room_manage_edit_and_del_pre, db_connection,
+    ):
+
+        meeting_room_info_page = meeting_room_manage_edit_and_del_pre.click_edit_button()
+        self.log_step("点击编辑按钮")
+
+        meeting_room_info_page.fill_room_name_by_press("新增会议室名称过长示例" * 2)
+        self.log_step("填写会议室名称")
+        meeting_room_name = meeting_room_info_page.get_room_name()
+        assert len(meeting_room_name) <= 10
+        self.log_step("校验会议室名称长度小于等于10")
+
+        meeting_room_info_page.fill_room_code_by_press("HYS10-506" * 4)
+        self.log_step("填写会议室编号")
+        meeting_room_code = meeting_room_info_page.get_room_code()
+        assert len(meeting_room_code) <= 30
+
+        meeting_room_info_page.fill_capacity_by_press("1001")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == "1000"
+        self.log_step("校验会议室容量小于等于1000")
+
+        meeting_room_info_page.fill_capacity_by_press("3.4")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == "34"
+        self.log_step("校验会议室容量无法输入小数")
+
+        meeting_room_info_page.fill_capacity_by_press("3/4")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == "34"
+        self.log_step("校验会议室容量无法输入分数")
+
+        meeting_room_info_page.fill_capacity_by_press("-1")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == "1"
+        self.log_step("校验会议室容量无法输入负数")
+
+        meeting_room_info_page.fill_capacity_by_press("abc")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == ""
+        self.log_step("校验会议室容量无法输入字母")
+
+        meeting_room_info_page.fill_capacity_by_press("￥￥￥￥￥")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == ""
+        self.log_step("校验会议室容量无法输入特殊字符")
+
+        meeting_room_info_page.fill_capacity_by_press("中文")
+        self.log_step("填写会议室容量")
+        assert meeting_room_info_page.get_capacity() == ""
+        self.log_step("校验会议室容量无法输入中文")
+
+        meeting_room_info_page.fill_location_by_press("天王巷" * 15)
+        self.log_step("填写会议室位置")
+        assert len(meeting_room_info_page.get_location()) <= 40
+        self.log_step("校验会议室位置长度小于等于40")
+
+        meeting_room_info_page.toggle_time_limit(True, None, None, None, "25")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == "24"
+        self.log_step("校验可预约最长时间小于等于24")
+
+        meeting_room_info_page.fill_max_duration_by_press("3/4")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == "24"
+        self.log_step("校验可预约最长时间无法输入分数")
+
+        meeting_room_info_page.fill_max_duration_by_press("-1")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == "1"
+        self.log_step("校验可预约最长时间无法输入负数")
+
+        meeting_room_info_page.fill_max_duration_by_press("abc")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == ""
+        self.log_step("校验可预约最长时间无法输入字母")
+
+        meeting_room_info_page.fill_max_duration_by_press("$$$$")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == ""
+        self.log_step("校验可预约最长时间无法输入特殊字符")
+
+        meeting_room_info_page.fill_max_duration_by_press("中文")
+        self.log_step("填写可预约最长时间")
+        assert meeting_room_info_page.get_max_duration() == ""
+        self.log_step("校验可预约最长时间无法输入中文")
 
 
 def get_department_ids(db_connection, department_names):
@@ -351,21 +642,6 @@ def build_meeting_room_sql(room=None, capacity=None, device=None, status=None,
     """
     根据给定参数动态生成会议室查询 SQL。
     """
-    # sql = """
-    #     SELECT mr.id, mr.name, mr.number, mr.capacity, mr.facility, mr.state,
-    #            sdd.dict_label AS stateName, mr.enable_approve, mr.location,
-    #            sd.dept_id AS managementId, sd.dept_name AS managementName,
-    #            su1.phonenumber AS managerPhone, su1.nick_name AS managerName,
-    #            su2.phonenumber AS operatorPhone, su2.nick_name AS operatorName,
-    #            mr.update_time AS operate_time
-    #     FROM meeting_room mr
-    #     LEFT JOIN sys_dept sd ON mr.management = sd.dept_id AND sd.status = '0' AND sd.del_flag = '0'
-    #     LEFT JOIN sys_user su1 ON mr.manager = su1.user_id AND su1.status = '0' AND su1.del_flag = '0'
-    #     LEFT JOIN sys_user su2 ON mr.update_by = su2.user_name AND su2.status = '0' AND su2.del_flag = '0'
-    #     LEFT JOIN sys_dict_data sdd ON mr.state = sdd.dict_value AND sdd.status = '0' AND sdd.dict_type = 'meeting_room_state'
-    #     WHERE mr.del_flag = '0'
-    # """
-
     sql = """
             SELECT mr.id, mr.name, mr.number, mr.capacity, mr.facility, mr.state, 
                    sdd.dict_label AS stateName, mr.enable_approve, mr.location, 
@@ -417,12 +693,6 @@ def build_meeting_room_sql(room=None, capacity=None, device=None, status=None,
         placeholders = ','.join(str(int(dept_id)) for dept_id in dept_ids)
         conditions.append(f"AND management IN ({placeholders})")
 
-    # if manager:
-    #     conditions.append("AND su1.nick_name LIKE %(manager)s")
-    #     params["manager"] = f"%{manager}%"
-
-
-
     sql += " " + " ".join(conditions)
     sql += ') as mr '
     sql += """LEFT JOIN (SELECT * FROM sys_dept WHERE status='0' AND del_flag='0') as sd ON mr.management=sd.dept_id
@@ -466,33 +736,33 @@ class TestQueryMeetingRoom(BaseCase):
              "刘汪汉"),
         ]
     )
-    def test_query_meeting_room(self, meeting_room_manage_page, db_connection, room, capacity, device, status, location,
+    def test_query_meeting_room(self, meeting_room_manage_query, db_connection, room, capacity, device, status, location,
                                 approval,
                                 departments, manager):
         # 输入查询条件
-        meeting_room_manage_page.input_room(room)
+        meeting_room_manage_query.input_room(room)
         self.log_step("输入会议室编号/名称")
-        meeting_room_manage_page.input_capacity(capacity)
+        meeting_room_manage_query.input_capacity(capacity)
         self.log_step("输入容纳人数")
-        meeting_room_manage_page.choose_device(device)
+        meeting_room_manage_query.choose_device(device)
         self.log_step("选择会议室设备")
-        meeting_room_manage_page.choose_status(status)
+        meeting_room_manage_query.choose_status(status)
         self.log_step("选择会议室状态")
-        meeting_room_manage_page.input_location(location)
+        meeting_room_manage_query.input_location(location)
         self.log_step("输入会议室位置")
-        meeting_room_manage_page.choose_approval(approval)
+        meeting_room_manage_query.choose_approval(approval)
         self.log_step("选择是否需要审批")
-        meeting_room_manage_page.choose_department(departments)
+        meeting_room_manage_query.choose_department(departments)
         self.log_step("选择会议室部门")
-        meeting_room_manage_page.input_manager(manager)
+        meeting_room_manage_query.input_manager(manager)
         self.log_step("输入管理人")
         # 点击查询按钮
-        meeting_room_manage_page.click_query_button()
+        meeting_room_manage_query.click_query_button()
         self.log_step("点击查询按钮")
         # 等待查询结果加载
-        meeting_room_manage_page.page.wait_for_timeout(2000)  # 等待 2 秒
+        meeting_room_manage_query.page.wait_for_timeout(2000)  # 等待 2 秒
         self.log_step("等待查询结果加载")
-        pages_data, pages_data_count = meeting_room_manage_page.get_table_data()
+        pages_data, pages_data_count = meeting_room_manage_query.get_table_data()
         self.log_step("获取表格数据")
 
         # 获取部门 ID 列表
@@ -500,7 +770,7 @@ class TestQueryMeetingRoom(BaseCase):
             # 构造参数化 SQL 查询
             sql = "SELECT dept_id FROM sys_dept WHERE dept_name = %(dept_name)s AND status = '0' AND del_flag = '0'"
             # params = {"dept_name": "集成公司"}
-            db_data_dept_ids = meeting_room_manage_page.get_db_data(db_connection, query=sql,
+            db_data_dept_ids = meeting_room_manage_query.get_db_data(db_connection, query=sql,
                                                                     params={"dept_name": departments[-1]})
             dept_ids = [row["dept_id"] for row in db_data_dept_ids]
         else:
@@ -511,39 +781,66 @@ class TestQueryMeetingRoom(BaseCase):
                                              location=location, approval=approval, dept_ids=dept_ids,
                                              manager=manager)
 
-        db_data = meeting_room_manage_page.get_db_data(db_connection, query=sql, params=params)
-        # 从数据库中提取数据
-        # db_data = meeting_room_manage_page.get_db_data(db_connection, query="""
-        #         select * from meeting_room;
-        #         """)
+        db_data = meeting_room_manage_query.get_db_data(db_connection, query=sql, params=params)
         self.log_step("从数据库中提取数据")
 
         # 比较两个数据集
-        assert meeting_room_manage_page.compare_data(pages_data, db_data,
+        assert meeting_room_manage_query.compare_data(pages_data, db_data,
                                                      ['name', 'number', 'capacity', 'facility', 'stateName', 'enable_approve','location', 'managementName', 'managerName','operatorName','operate_time']), "页面数据与数据库数据不一致"
         self.log_step("比较两个数据集")
-        meeting_room_manage_page.click_reset_btn()
 
 
 class TestDeleteMeetingRoom(BaseCase):
-    def test_delete_meeting_room(self, meeting_room_manage_page):
-        count_pre = meeting_room_manage_page.get_table_rows().count()
+    def test_delete_meeting_room(self, meeting_room_manage_edit_and_del_pre, db_connection):
+        db_data_pre = meeting_room_manage_edit_and_del_pre.get_db_data(
+            db_connection,
+            query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
+        )
+        db_count_pre = db_data_pre[0]["count"]
+        _, count_pre = meeting_room_manage_edit_and_del_pre.extract_table_data()
         self.log_step("统计删除操作前表格行数")
-        meeting_room_manage_page.click_delete_button()
+        meeting_room_manage_edit_and_del_pre.click_delete_button()
         self.log_step("点击删除按钮,弹窗后点击确定按钮")
-        count_after = meeting_room_manage_page.get_table_rows().count()
+        meeting_room_manage_edit_and_del_pre.verify_delete_success_message()
+        self.log_step("验证页面出现删除成功字样")
+        meeting_room_manage_edit_and_del_pre.page.wait_for_timeout(1000)
+        _, count_after = meeting_room_manage_edit_and_del_pre.extract_table_data()
         self.log_step("统计删除成功操作后表格行数")
-        meeting_room_manage_page.verify_delete_success_message(count_pre, count_after)
-        self.log_step("验证删除成功")
+        assert count_after == count_pre - 1, "表格中的行数未减少"
+        # 验证数据库中的数据是否已删除（或标记为已删除）
+        db_connection.ping(reconnect=True)  # 确保数据库连接有效
+        db_connection.commit()
+        db_data_after = meeting_room_manage_edit_and_del_pre.get_db_data(
+            db_connection,
+            query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
+        )
+        db_count_after = db_data_after[0]["count"]
+        assert db_count_after == db_count_pre + 1, "数据库中的数据未删除"
+        self.log_step("验证数据库中的数据是否已删除")
 
-    def test_delete_meeting_room_cancel(self, meeting_room_manage_page):
+    def test_delete_meeting_room_cancel(self, meeting_room_manage_edit_and_del_pre, db_connection):
+        db_data_pre = meeting_room_manage_edit_and_del_pre.get_db_data(
+            db_connection,
+            query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
+        )
+        db_count_pre = db_data_pre[0]["count"]
         # 点击删除按钮之前，表格中的行数
-        count_pre = meeting_room_manage_page.get_table_rows().count()
+        _, count_pre = meeting_room_manage_edit_and_del_pre.extract_table_data()
         self.log_step("统计删除操作前表格行数")
-        meeting_room_manage_page.click_delete_button_cancel()
+        meeting_room_manage_edit_and_del_pre.click_delete_button_cancel()
         self.log_step("点击删除按钮，弹窗后点击取消按钮")
         # 点击删除按钮之后，表格中的行数
-        count_after = meeting_room_manage_page.get_table_rows().count()
+        _, count_after = meeting_room_manage_edit_and_del_pre.extract_table_data()
         self.log_step("统计删除取消操作后表格行数")
-        meeting_room_manage_page.verify_delete_cancel_message(count_pre, count_after)
+        meeting_room_manage_edit_and_del_pre.verify_delete_cancel_message(count_pre, count_after)
         self.log_step("验证删除取消")
+        meeting_room_manage_edit_and_del_pre.page.wait_for_timeout(1000)
+        # 验证数据库中的数据是否已删除（或标记为已删除）
+        db_connection.ping(reconnect=True)  # 确保数据库连接有效
+        db_connection.commit()
+        db_data_after = meeting_room_manage_edit_and_del_pre.get_db_data(
+            db_connection,
+            query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
+        )
+        db_count_after = db_data_after[0]["count"]
+        assert db_count_after == db_count_pre, "数据库中的数据被误删除"

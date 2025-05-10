@@ -32,32 +32,32 @@ def page(playwright):
 def logged_in_page(page: Page):
     login_page = LoginPage(page)
     login_page.goto()
-    login_page.fill_username("18855056081")
-    login_page.fill_password("123456@")
-    login_page.fill_captcha("1")
+    login_page.fill_username("admin")
+    login_page.fill_password("Djmysqltest@2023")
+    login_page.fill_captcha()
     login_page.click_login()
     yield login_page
 
-@pytest.fixture(scope="session")
-def home_page(logged_in_page):
-    home_page = HomePage(logged_in_page.page)
-    yield home_page
+# @pytest.fixture(scope="session")
+# def home_page(logged_in_page):
+#     home_page = HomePage(logged_in_page.page)
+#     yield home_page
 @pytest.fixture(scope="module")
-def meeting_manage_page(home_page):
-    meeting_manage_page = home_page.get_meeting_manage_page()
+def meeting_manage_page(logged_in_page):
+    meeting_manage_page = MeetingRoomManagePageBase(logged_in_page.page)
     yield meeting_manage_page
 
-@pytest.fixture(scope="function")
-def meeting_room_manage_page(meeting_manage_page):
-    # meeting_manage_page.locator("//span[text()='会议室管理']").click()
-    # 点击会议室管理菜单项
-    meeting_manage_page.locator("//ul[@role='menubar']/div[3]").click()
-    yield MeetingRoomManagePageBase(meeting_manage_page)
-    # # 清理逻辑：确保返回到会议室管理首页
-    # try:
-    #     meeting_manage_page.locator("//ul[@role=’menubar‘]/div[3]").click()
-    # except Exception as e:
-    #     logging.error(f"清理逻辑执行失败: {e}")
+# @pytest.fixture(scope="function")
+# def meeting_room_manage_page(meeting_manage_page):
+#     # meeting_manage_page.locator("//span[text()='会议室管理']").click()
+#     # 点击会议室管理菜单项
+#     meeting_manage_page.locator("//ul[@role='menubar']/div[3]").click()
+#     yield MeetingRoomManagePageBase(meeting_manage_page)
+#     # # 清理逻辑：确保返回到会议室管理首页
+#     # try:
+#     #     meeting_manage_page.locator("//ul[@role=’menubar‘]/div[3]").click()
+#     # except Exception as e:
+#     #     logging.error(f"清理逻辑执行失败: {e}")
 
 @pytest.fixture(scope="session")
 def db_connection():
@@ -76,7 +76,7 @@ def db_connection():
 
 # 测试编辑功能的前置操作，保证表格中一定有数据
 @pytest.fixture(scope="function")
-def meeting_room_manage_edit_pre(meeting_room_manage_page):
+def meeting_room_manage_edit_and_del_pre(meeting_room_manage_page, db_connection):
     # 等待3秒，防止表格尚未加载出来，导致计算出的表格行数为0
     meeting_room_manage_page.page.wait_for_timeout(3000)
     # 统计表格行数
@@ -84,9 +84,16 @@ def meeting_room_manage_edit_pre(meeting_room_manage_page):
     if rows_count == 0:
         # 新增一条数据
         test_add_meeting_room = TestAddMeetingRoom()
-        test_add_meeting_room.test_add_meeting_room(meeting_room_manage_page, "新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+        test_add_meeting_room.test_add_meeting_room(meeting_room_manage_page, db_connection, "新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
              "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], True)
     yield meeting_room_manage_page
+
+@pytest.fixture(scope="function")
+def meeting_room_manage_query(meeting_room_manage_page):
+    yield meeting_room_manage_page
+    meeting_room_manage_page.click_reset_btn()
+
+

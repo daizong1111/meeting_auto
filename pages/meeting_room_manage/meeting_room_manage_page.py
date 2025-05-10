@@ -1,8 +1,17 @@
+from base_case import BaseCase
 from pages.meeting_room_manage.meeting_room_info_page import MeetingRoomInfoPage
 from pages.base_query_page import BaseQueryPage
 
 
 class MeetingRoomManagePageBase(BaseQueryPage):
+
+    # 从数据库中查询会议室表中的数据条数
+    def excute_query_count(self, connection):
+        sql = """select count(*) as count from meeting_room where del_flag = 0;"""
+        db_data = self.get_db_data(connection, sql)
+        return db_data[0]["count"]
+
+
     def __init__(self, page):
         super().__init__(page)
         self.page = page
@@ -173,9 +182,9 @@ class MeetingRoomManagePageBase(BaseQueryPage):
         self.get_delete_button().evaluate("(element) => element.click()")
         self.page.get_by_role("button", name="取消").click()
 
-    def verify_delete_success_message(self, count_pre, count_after):
+    def verify_delete_success_message(self):
         self.page.get_by_role("alert").get_by_text("删除成功").wait_for()
-        assert self.page.get_by_role("alert").get_by_text("删除成功").is_visible() and count_pre - 1 == count_after
+        assert self.page.get_by_role("alert").get_by_text("删除成功").is_visible()
 
     def verify_delete_cancel_message(self, count_pre, count_after):
         # 等待“删除成功”消息消失

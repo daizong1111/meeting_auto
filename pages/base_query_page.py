@@ -27,6 +27,8 @@ class BaseQueryPage:
         pass
 
     def extract_table_data(self):
+        self.get_first_page_button().click()
+        self.page.wait_for_timeout(1000)
         data = []
         total_rows_count = 0
 
