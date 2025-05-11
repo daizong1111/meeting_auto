@@ -12,8 +12,8 @@ def run_tests():
                    # 执行指定的用例文件(不写则执行所有的用例)
                    # 'tests/test_meeting_manage/test_meeting_room_manage.py',
                    # 'tests/test_meeting_manage/test_meeting_room_manage.py::TestAddMeetingRoom::test_add_meeting_room_success',
-                   # 'tests/test_meeting_manage/test_meeting_room_manage.py::TestDeleteMeetingRoom',
-                   'tests/test_meeting_manage/test_meeting_room_manage.py::TestEditMeetingRoom',
+                   'tests/test_meeting_manage/test_meeting_room_manage.py::TestDeleteMeetingRoom',
+                   # 'tests/test_meeting_manage/test_meeting_room_manage.py::TestEditMeetingRoom',
                    # 'tests/test_meeting_manage/test_meeting_room_manage.py::TestQueryMeetingRoom'
                    ]
     # 运行 pytest

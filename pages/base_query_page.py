@@ -27,8 +27,7 @@ class BaseQueryPage:
         pass
 
     def extract_table_data(self):
-        self.get_first_page_button().click()
-        self.page.wait_for_timeout(1000)
+        """抽取当前页面的表格中的数据"""
         data = []
         total_rows_count = 0
 
@@ -48,6 +47,7 @@ class BaseQueryPage:
         return data, total_rows_count
 
     def get_table_data(self):
+        """获取所有页的表格中的数据"""
         # 处理查询结果列表为空的情况
         if self._is_table_empty():
             return [], 0

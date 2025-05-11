@@ -84,7 +84,7 @@ def meeting_room_manage_edit_and_del_pre(meeting_room_manage_page, db_connection
     if rows_count == 0:
         # 新增一条数据
         test_add_meeting_room = TestAddMeetingRoom()
-        test_add_meeting_room.test_add_meeting_room(meeting_room_manage_page, db_connection, "新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+        test_add_meeting_room.test_add_meeting_room_success(meeting_room_manage_page, db_connection, "新增-成功", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
              "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",

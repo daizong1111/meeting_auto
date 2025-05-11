@@ -209,3 +209,5 @@ class MeetingRoomManagePageBase(BaseQueryPage):
 
     def click_reset_btn(self):
         self.get_reset_btn().click()
+
+#  AI ui自动化，把自然语言转换为自动化代码  Browser Use

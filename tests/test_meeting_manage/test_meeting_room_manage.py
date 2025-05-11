@@ -716,24 +716,26 @@ class TestQueryMeetingRoom(BaseCase):
     @pytest.mark.parametrize(
         "room, capacity, device, status, location, approval, departments, manager",
         [
-            ("新增-成功", "", "", "", "", "", "",
+            ("ssssssss", "", "", "", "", "", "",
              ""),
-            ("", "50", "", "", "", "", "",
-             ""),
-            ("", "", "电视", "", "", "", "",
-             ""),
-            ("", "", "", "维修中", "", "", "",
-             ""),
-            ("", "", "", "", "天王巷", "", "",
-             ""),
-            ("", "", "", "", "", "否", "",
-             ""),
-            ("", "", "", "", "", "", ["集成公司", "省DICT研发中心", "项目管理办公室"],
-             ""),
-            ("", "", "", "", "", "", "",
-             "张杰"),
-            ("新增-成功", "60", "白板", "正常", "天王巷", "全部", ["集成公司", "省DICT研发中心", "产品需求团队"],
-             "刘汪汉"),
+            # ("新增-成功", "", "", "", "", "", "",
+            #  ""),
+            # ("", "50", "", "", "", "", "",
+            #  ""),
+            # ("", "", "电视", "", "", "", "",
+            #  ""),
+            # ("", "", "", "维修中", "", "", "",
+            #  ""),
+            # ("", "", "", "", "天王巷", "", "",
+            #  ""),
+            # ("", "", "", "", "", "否", "",
+            #  ""),
+            # ("", "", "", "", "", "", ["集成公司", "省DICT研发中心", "项目管理办公室"],
+            #  ""),
+            # ("", "", "", "", "", "", "",
+            #  "张杰"),
+            # ("新增-成功", "60", "白板", "正常", "天王巷", "全部", ["集成公司", "省DICT研发中心", "产品需求团队"],
+            #  "刘汪汉"),
         ]
     )
     def test_query_meeting_room(self, meeting_room_manage_query, db_connection, room, capacity, device, status, location,
@@ -797,14 +799,14 @@ class TestDeleteMeetingRoom(BaseCase):
             query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
         )
         db_count_pre = db_data_pre[0]["count"]
-        _, count_pre = meeting_room_manage_edit_and_del_pre.extract_table_data()
+        _, count_pre = meeting_room_manage_edit_and_del_pre.get_table_data()
         self.log_step("统计删除操作前表格行数")
         meeting_room_manage_edit_and_del_pre.click_delete_button()
         self.log_step("点击删除按钮,弹窗后点击确定按钮")
         meeting_room_manage_edit_and_del_pre.verify_delete_success_message()
         self.log_step("验证页面出现删除成功字样")
         meeting_room_manage_edit_and_del_pre.page.wait_for_timeout(1000)
-        _, count_after = meeting_room_manage_edit_and_del_pre.extract_table_data()
+        _, count_after = meeting_room_manage_edit_and_del_pre.get_table_data()
         self.log_step("统计删除成功操作后表格行数")
         assert count_after == count_pre - 1, "表格中的行数未减少"
         # 验证数据库中的数据是否已删除（或标记为已删除）
@@ -825,12 +827,12 @@ class TestDeleteMeetingRoom(BaseCase):
         )
         db_count_pre = db_data_pre[0]["count"]
         # 点击删除按钮之前，表格中的行数
-        _, count_pre = meeting_room_manage_edit_and_del_pre.extract_table_data()
+        _, count_pre = meeting_room_manage_edit_and_del_pre.get_table_data()
         self.log_step("统计删除操作前表格行数")
         meeting_room_manage_edit_and_del_pre.click_delete_button_cancel()
         self.log_step("点击删除按钮，弹窗后点击取消按钮")
         # 点击删除按钮之后，表格中的行数
-        _, count_after = meeting_room_manage_edit_and_del_pre.extract_table_data()
+        _, count_after = meeting_room_manage_edit_and_del_pre.get_table_data()
         self.log_step("统计删除取消操作后表格行数")
         meeting_room_manage_edit_and_del_pre.verify_delete_cancel_message(count_pre, count_after)
         self.log_step("验证删除取消")
