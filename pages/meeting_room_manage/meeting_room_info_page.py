@@ -4,6 +4,11 @@ class MeetingRoomInfoPage:
     def __init__(self, page):
         self.page = page
 
+    # 某些选择框右侧的叉号按钮，用来清空内容
+    def get_close_btn(self):
+        return self.page.locator("//i[contains(@class, 'el-input__icon') and contains(@class, 'el-icon-circle-close') and not(contains(@class,'el-input__validateIcon'))]")
+
+
     def click_add_meeting_room_button(self):
         self.page.get_by_role("button", name="新建").click()
 
@@ -84,7 +89,10 @@ class MeetingRoomInfoPage:
             return
         if status == "":
             # 清空该选择框的内容
-            self.page.get_by_placeholder("请选择").first.evaluate("element => element.value = ''")
+            if self.page.get_by_placeholder("请选择").first.input_value() != "":
+                self.page.get_by_placeholder("请选择").first.click()
+                self.get_close_btn().click()
+            # self.page.get_by_placeholder("请选择").first.evaluate("element => element.value = ''")
             return
         self.page.get_by_placeholder("请选择").first.click()
         room_status_li = self.page.locator("li").filter(has_text=status)
@@ -111,14 +119,16 @@ class MeetingRoomInfoPage:
             if class_attribute is not None and "equipment_unchecked" in class_attribute:
                 device_span.click()
             # self.page.get_by_text(device).click()
-            # logging.info(f"选择了设备: {device}")
 
     def select_departments(self, departments):
         if departments is None:
             return  # 如果devices为空，直接返回
         if departments == "":
             # 清空该选择框的内容
-            self.page.get_by_placeholder("请选择").nth(1).evaluate("element => element.value = ''")
+            # self.page.get_by_placeholder("请选择").nth(1).evaluate("element => element.value = ''")
+            if self.page.get_by_placeholder("请选择").nth(1).input_value() != "":
+                self.page.get_by_placeholder("请选择").nth(1).click()
+                self.get_close_btn().click()
             return
         self.page.get_by_placeholder("请选择").nth(1).click()
         if not isinstance(departments, (list, tuple, set)):
@@ -297,6 +307,22 @@ class MeetingRoomInfoPage:
             else:
                 self.page.get_by_label("请选择部门和人员").get_by_text(user).click()
         self.page.get_by_role("button", name="确 定").click()
+
+    def fill_basic_info(self, room_name, room_code, capacity, location, status, devices, departments, manager, description):
+        self.fill_room_name(room_name)
+        self.fill_room_code(room_code)
+        self.fill_capacity(capacity)
+        self.fill_location(location)
+        self.select_room_status(status)
+        self.select_devices(devices)
+        self.select_departments(departments)
+        self.select_manager(manager)
+        self.fill_description(description)
+
+    def fill_high_level_info(self, need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users):
+        self.toggle_approval(need_approval, approval_person)
+        self.toggle_time_limit(need_time_limit, days, start_time, end_time, max_duration)
+        self.select_users(users)
 
     def click_submit_button(self):
         self.page.get_by_role("button", name="提交").click()

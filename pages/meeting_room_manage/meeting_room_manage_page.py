@@ -4,7 +4,6 @@ from pages.base_query_page import BaseQueryPage
 
 
 class MeetingRoomManagePageBase(BaseQueryPage):
-
     # 从数据库中查询会议室表中的数据条数
     def excute_query_count(self, connection):
         sql = """select count(*) as count from meeting_room where del_flag = 0;"""

@@ -110,30 +110,12 @@ class TestAddMeetingRoom(BaseCase):
         count_pre = meeting_room_manage_page.excute_query_count(db_connection)
         meeting_room_info_page = meeting_room_manage_page.click_add_button()
         self.log_step("点击新增按钮")
-        meeting_room_info_page.fill_room_name(room_name)
-        self.log_step("填写会议室名称")
-        meeting_room_info_page.fill_room_code(room_code)
-        self.log_step("填写会议室编号")
-        meeting_room_info_page.fill_capacity(capacity)
-        self.log_step("填写会议室容量")
-        meeting_room_info_page.fill_location(location)
-        self.log_step("填写会议室位置")
-        meeting_room_info_page.select_room_status(status)
-        self.log_step("选择会议室状态")
-        meeting_room_info_page.select_devices(devices)
-        self.log_step("选择会议室设备")
-        meeting_room_info_page.select_departments(departments)
-        self.log_step("选择管理部门")
-        meeting_room_info_page.select_manager(manager)
-        self.log_step("选择管理人")
-        meeting_room_info_page.fill_description(description)
-        self.log_step("填写相关描述")
-        meeting_room_info_page.toggle_approval(need_approval, approval_person)
-        self.log_step("选择是否需要审批")
-        meeting_room_info_page.toggle_time_limit(need_time_limit, days, start_time, end_time, max_duration)
-        self.log_step("选择是否需要时间限制")
-        meeting_room_info_page.select_users(users)
-        self.log_step("选择可使用者")
+        meeting_room_info_page.fill_basic_info(room_name, room_code, capacity, location, status, devices, departments,
+                                               manager, description)
+        self.log_step("填写基本信息")
+        meeting_room_info_page.fill_high_level_info(need_approval, approval_person, need_time_limit, days, start_time,
+                                                    end_time, max_duration, users)
+        self.log_step("填写高级信息")
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
         meeting_room_info_page.page.wait_for_timeout(1000)
@@ -153,50 +135,50 @@ class TestAddMeetingRoom(BaseCase):
              "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
              ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-容纳人数", "HYS10-506", "", "天王巷", "正常", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-会议室位置", "HYS10-506", "10", "", "正常", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-会议室状态", "HYS10-506", "10", "天王巷", "", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-会议室设备", "HYS10-506", "10", "天王巷", "正常", "",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-管理部门和管理人和审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-            #  "", "", "会议室很大，能容纳很多人", True, "", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-管理人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-可预约的时间范围", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
-            #  "", "08:30", "10:30", "24",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
-            # ("新增-失败-必填项为空-单次可预约最长时间", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
-            #  "刘富豪/17356523872", True,
-            #  ["星期一", "星期二", "星期三"], "08:30", "10:30", "",
-            #  ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False)
+            ("新增-失败-必填项为空-容纳人数", "HYS10-506", "", "天王巷", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            ("新增-失败-必填项为空-会议室位置", "HYS10-506", "10", "", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            ("新增-失败-必填项为空-会议室状态", "HYS10-506", "10", "天王巷", "", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            ("新增-失败-必填项为空-会议室设备", "HYS10-506", "10", "天王巷", "正常", "",
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            ("新增-失败-必填项为空-管理部门和管理人和审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+             "", "", "会议室很大，能容纳很多人", True, "", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            ("新增-失败-必填项为空-管理人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            ("新增-失败-必填项为空-审批人", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            ("新增-失败-必填项为空-可预约的时间范围", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
+             "", "08:30", "10:30", "24",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
+            ("新增-失败-必填项为空-单次可预约最长时间", "HYS10-506", "10", "天王巷", "正常", ["投影仪"],
+             ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
+             "刘富豪/17356523872", True,
+             ["星期一", "星期二", "星期三"], "08:30", "10:30", "",
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False)
 
             # 添加更多测试数据集
         ],
@@ -227,30 +209,12 @@ class TestAddMeetingRoom(BaseCase):
         count_pre = meeting_room_manage_page.excute_query_count(db_connection)
         meeting_room_info_page = meeting_room_manage_page.click_add_button()
         self.log_step("点击新增按钮")
-        meeting_room_info_page.fill_room_name(room_name)
-        self.log_step("填写会议室名称")
-        meeting_room_info_page.fill_room_code(room_code)
-        self.log_step("填写会议室编号")
-        meeting_room_info_page.fill_capacity(capacity)
-        self.log_step("填写会议室容量")
-        meeting_room_info_page.fill_location(location)
-        self.log_step("填写会议室位置")
-        meeting_room_info_page.select_room_status(status)
-        self.log_step("选择会议室状态")
-        meeting_room_info_page.select_devices(devices)
-        self.log_step("选择会议室设备")
-        meeting_room_info_page.select_departments(departments)
-        self.log_step("选择管理部门")
-        meeting_room_info_page.select_manager(manager)
-        self.log_step("选择管理人")
-        meeting_room_info_page.fill_description(description)
-        self.log_step("填写相关描述")
-        meeting_room_info_page.toggle_approval(need_approval, approval_person)
-        self.log_step("选择是否需要审批")
-        meeting_room_info_page.toggle_time_limit(need_time_limit, days, start_time, end_time, max_duration)
-        self.log_step("选择是否需要时间限制")
-        meeting_room_info_page.select_users(users)
-        self.log_step("选择可使用者")
+        meeting_room_info_page.fill_basic_info(room_name, room_code, capacity, location, status, devices, departments,
+                                               manager, description)
+        self.log_step("填写基本信息")
+        meeting_room_info_page.fill_high_level_info(need_approval, approval_person, need_time_limit, days, start_time,
+                                                    end_time, max_duration, users)
+        self.log_step("填写高级信息")
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
         meeting_room_info_page.page.wait_for_timeout(1000)
@@ -380,30 +344,10 @@ class TestEditMeetingRoom(BaseCase):
         room_code = room_code + random_code
         meeting_room_info_page = meeting_room_manage_edit_and_del_pre.click_edit_button()
         self.log_step("点击编辑按钮")
-        meeting_room_info_page.fill_room_name(room_name)
-        self.log_step("填写会议室名称")
-        meeting_room_info_page.fill_room_code(room_code)
-        self.log_step("填写会议室编号")
-        meeting_room_info_page.fill_capacity(capacity)
-        self.log_step("填写会议室容量")
-        meeting_room_info_page.fill_location(location)
-        self.log_step("填写会议室位置")
-        meeting_room_info_page.select_room_status(status)
-        self.log_step("选择会议室状态")
-        meeting_room_info_page.select_devices(devices)
-        self.log_step("选择会议室设备")
-        meeting_room_info_page.select_departments(departments)
-        self.log_step("选择管理部门")
-        meeting_room_info_page.select_manager(manager)
-        self.log_step("选择管理人")
-        meeting_room_info_page.fill_description(description)
-        self.log_step("填写相关描述")
-        meeting_room_info_page.toggle_approval(need_approval, approval_person)
-        self.log_step("选择是否需要审批")
-        meeting_room_info_page.toggle_time_limit(need_time_limit, days, start_time, end_time, max_duration)
-        self.log_step("选择是否需要时间限制")
-        meeting_room_info_page.select_users(users)
-        self.log_step("选择可使用者")
+        meeting_room_info_page.fill_basic_info(room_name, room_code, capacity, location, status, devices, departments, manager, description)
+        self.log_step("填写基本信息")
+        meeting_room_info_page.fill_high_level_info(need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users)
+        self.log_step("填写高级信息")
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
         meeting_room_manage_edit_and_del_pre.page.wait_for_timeout(1000)
@@ -471,8 +415,7 @@ class TestEditMeetingRoom(BaseCase):
              ["集成公司", "省DICT研发中心", "项目管理办公室"], "刘富豪/17356523872", "会议室很大，能容纳很多人", True,
              "刘富豪/17356523872", True,
              ["星期一", "星期二", "星期三"], "08:30", "10:30", "",
-             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False)
-
+             ["集成公司", "省DICT研发中心", "项目管理办公室", "刘富豪"], False),
             # 添加更多测试数据集
         ],
         # ids=[
@@ -497,30 +440,10 @@ class TestEditMeetingRoom(BaseCase):
                                end_time, max_duration, users, is_positive):
         meeting_room_info_page = meeting_room_manage_edit_and_del_pre.click_edit_button()
         self.log_step("点击编辑按钮")
-        meeting_room_info_page.fill_room_name(room_name)
-        self.log_step("填写会议室名称")
-        meeting_room_info_page.fill_room_code(room_code)
-        self.log_step("填写会议室编号")
-        meeting_room_info_page.fill_capacity(capacity)
-        self.log_step("填写会议室容量")
-        meeting_room_info_page.fill_location(location)
-        self.log_step("填写会议室位置")
-        meeting_room_info_page.select_room_status(status)
-        self.log_step("选择会议室状态")
-        meeting_room_info_page.select_devices(devices)
-        self.log_step("选择会议室设备")
-        meeting_room_info_page.select_departments(departments)
-        self.log_step("选择管理部门")
-        meeting_room_info_page.select_manager(manager)
-        self.log_step("选择管理人")
-        meeting_room_info_page.fill_description(description)
-        self.log_step("填写相关描述")
-        meeting_room_info_page.toggle_approval(need_approval, approval_person)
-        self.log_step("选择是否需要审批")
-        meeting_room_info_page.toggle_time_limit(need_time_limit, days, start_time, end_time, max_duration)
-        self.log_step("选择是否需要时间限制")
-        meeting_room_info_page.select_users(users)
-        self.log_step("选择可使用者")
+        meeting_room_info_page.fill_basic_info(room_name, room_code, capacity, location, status, devices, departments, manager, description)
+        self.log_step("填写基本信息")
+        meeting_room_info_page.fill_high_level_info(need_approval, approval_person, need_time_limit, days, start_time, end_time, max_duration, users)
+        self.log_step("填写高级信息")
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
         meeting_room_info_page.verify_error_edit_miss_message()
@@ -716,26 +639,24 @@ class TestQueryMeetingRoom(BaseCase):
     @pytest.mark.parametrize(
         "room, capacity, device, status, location, approval, departments, manager",
         [
-            ("ssssssss", "", "", "", "", "", "",
+            ("新增-成功", "", "", "", "", "", "",
              ""),
-            # ("新增-成功", "", "", "", "", "", "",
-            #  ""),
-            # ("", "50", "", "", "", "", "",
-            #  ""),
-            # ("", "", "电视", "", "", "", "",
-            #  ""),
-            # ("", "", "", "维修中", "", "", "",
-            #  ""),
-            # ("", "", "", "", "天王巷", "", "",
-            #  ""),
-            # ("", "", "", "", "", "否", "",
-            #  ""),
-            # ("", "", "", "", "", "", ["集成公司", "省DICT研发中心", "项目管理办公室"],
-            #  ""),
-            # ("", "", "", "", "", "", "",
-            #  "张杰"),
-            # ("新增-成功", "60", "白板", "正常", "天王巷", "全部", ["集成公司", "省DICT研发中心", "产品需求团队"],
-            #  "刘汪汉"),
+            ("", "50", "", "", "", "", "",
+             ""),
+            ("", "", "电视", "", "", "", "",
+             ""),
+            ("", "", "", "维修中", "", "", "",
+             ""),
+            ("", "", "", "", "天王巷", "", "",
+             ""),
+            ("", "", "", "", "", "否", "",
+             ""),
+            ("", "", "", "", "", "", ["集成公司", "省DICT研发中心", "项目管理办公室"],
+             ""),
+            ("", "", "", "", "", "", "",
+             "张杰"),
+            ("新增-成功", "60", "白板", "正常", "天王巷", "全部", ["集成公司", "省DICT研发中心", "产品需求团队"],
+             "刘汪汉"),
         ]
     )
     def test_query_meeting_room(self, meeting_room_manage_query, db_connection, room, capacity, device, status, location,
