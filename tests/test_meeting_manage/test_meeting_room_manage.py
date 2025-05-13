@@ -2,21 +2,11 @@
 此模块使用 Playwright 框架实现会议室管理模块的 UI 自动化测试，
 包含增、删、改、查功能的测试用例。
 """
-# import re
-
-import logging
 import random
-
-# from playwright.sync_api import expect, sync_playwright
-# import pytest
-
 import allure
 
 from base_case import BaseCase
 from pages.meeting_room_manage.meeting_room_manage_page import MeetingRoomManagePageBase
-
-# 配置日志记录器
-# logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 from playwright.sync_api import expect, sync_playwright
 import pytest
@@ -25,17 +15,23 @@ import logging
 # 配置日志记录器
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-
+# 测试夹具-获取浏览器当前打开页面，并返回 MeetingRoomManagePageBase 对象
 @pytest.fixture(scope="function")
 def meeting_room_manage_page():
     with sync_playwright() as playwright:
         # browser = playwright.chromium.connect_over_cdp("http://localhost:9222")
+        # 通过ip和端口连接到已经打开的chromium浏览器
         browser = playwright.chromium.connect_over_cdp("http://127.0.0.1:9222")
+        # 若浏览器已打开，则直接使用已打开的浏览器，否则创建一个新的浏览器实例
         context = browser.contexts[0] if browser.contexts else browser.new_context()
+        # 若该浏览器中有页面，则直接使用已打开的页面，否则创建一个新的页面
         page = context.pages[0] if context.pages else context.new_page()
         page.set_default_timeout(10000)  # 设置默认超时时间为 3000 毫秒
+        # 点击菜单栏中的“会议室管理”
         page.locator("//ul[@role='menubar']/div[3]").click()
+        # 创建会议室管理页面对象
         page = MeetingRoomManagePageBase(page)
+        # 返回会议室管理页面对象
         yield page
 
 
@@ -107,22 +103,30 @@ class TestAddMeetingRoom(BaseCase):
                               days: object,
                               start_time: object,
                               end_time: object, max_duration: object, users: object, is_positive: object):
+        # 统计数据库中的数据条数
         count_pre = meeting_room_manage_page.excute_query_count(db_connection)
+        # 点击新增按钮
         meeting_room_info_page = meeting_room_manage_page.click_add_button()
         self.log_step("点击新增按钮")
+        # 填写基础信息
         meeting_room_info_page.fill_basic_info(room_name, room_code, capacity, location, status, devices, departments,
                                                manager, description)
         self.log_step("填写基本信息")
+        # 填写高级设置信息
         meeting_room_info_page.fill_high_level_info(need_approval, approval_person, need_time_limit, days, start_time,
                                                     end_time, max_duration, users)
         self.log_step("填写高级信息")
+        # 点击提交按钮
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
+        # 等待1秒
         meeting_room_info_page.page.wait_for_timeout(1000)
         # 重新连接数据库，并提交事务
         db_connection.ping(reconnect=True)
         db_connection.commit()  # 提交事务确保可见，必须加上这段代码，否则读取到的数据数仍然是新增之前的
+        # 统计数据库中的数据条数
         count_after = meeting_room_manage_page.excute_query_count(db_connection)
+        # 校验新增成功
         meeting_room_info_page.verify_add_success_message(count_pre, count_after)
         self.log_step("验证新增成功")
 
@@ -206,22 +210,30 @@ class TestAddMeetingRoom(BaseCase):
                               days: object,
                               start_time: object,
                               end_time: object, max_duration: object, users: object, is_positive: object):
+        # 统计数据库中的数据条数
         count_pre = meeting_room_manage_page.excute_query_count(db_connection)
+        # 点击新增按钮
         meeting_room_info_page = meeting_room_manage_page.click_add_button()
         self.log_step("点击新增按钮")
+        # 填写基本信息
         meeting_room_info_page.fill_basic_info(room_name, room_code, capacity, location, status, devices, departments,
                                                manager, description)
         self.log_step("填写基本信息")
+        # 填写高级设置信息
         meeting_room_info_page.fill_high_level_info(need_approval, approval_person, need_time_limit, days, start_time,
                                                     end_time, max_duration, users)
         self.log_step("填写高级信息")
+        # 点击提交按钮
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
+        # 等待1秒
         meeting_room_info_page.page.wait_for_timeout(1000)
         # 重新连接数据库，并提交事务
         db_connection.ping(reconnect=True)
         db_connection.commit()  # 提交事务确保可见，必须加上这段代码，否则读取到的数据数仍然是新增之前的
+        # 统计数据库中的数据条数
         count_after = meeting_room_manage_page.excute_query_count(db_connection)
+        # 验证新增失败-必填项缺失
         meeting_room_info_page.verify_error_add_miss_message(count_pre, count_after)
         self.log_step("验证新增失败-必填项缺失")
 
@@ -232,7 +244,7 @@ class TestAddMeetingRoom(BaseCase):
 
         meeting_room_info_page = meeting_room_manage_page.click_add_button()
         self.log_step("点击新增按钮")
-
+        # 注意：后面的已press结尾的函数均是通过键盘向输入框中输入内容的，因为使用playwright的fill函数会绕过前端校验，必须使用键盘输入
         meeting_room_info_page.fill_room_name_by_press("新增会议室名称过长示例" * 2)
         self.log_step("填写会议室名称")
         meeting_room_name = meeting_room_info_page.get_room_name()
@@ -243,6 +255,7 @@ class TestAddMeetingRoom(BaseCase):
         self.log_step("填写会议室编号")
         meeting_room_code = meeting_room_info_page.get_room_code()
         assert len(meeting_room_code) <= 30
+        self.log_step("校验会议室编号长度小于等于30")
 
         meeting_room_info_page.fill_capacity_by_press("1001")
         self.log_step("填写会议室容量")
@@ -350,6 +363,7 @@ class TestEditMeetingRoom(BaseCase):
         self.log_step("填写高级信息")
         meeting_room_info_page.click_submit_button()
         self.log_step("点击提交按钮")
+        # 等待1秒
         meeting_room_manage_edit_and_del_pre.page.wait_for_timeout(1000)
         # 重新连接数据库，并提交事务
         db_connection.ping(reconnect=True)
@@ -467,6 +481,7 @@ class TestEditMeetingRoom(BaseCase):
         self.log_step("填写会议室编号")
         meeting_room_code = meeting_room_info_page.get_room_code()
         assert len(meeting_room_code) <= 30
+        self.log_step("校验会议室编号长度小于等于30")
 
         meeting_room_info_page.fill_capacity_by_press("1001")
         self.log_step("填写会议室容量")
@@ -539,25 +554,27 @@ class TestEditMeetingRoom(BaseCase):
         self.log_step("校验可预约最长时间无法输入中文")
 
 
-def get_department_ids(db_connection, department_names):
-    """
-    根据部门名称列表获取对应的部门 ID 列表。
-    """
-    if not department_names or not isinstance(department_names, list):
-        return []
-
-    # 构造参数化 SQL 查询
-    placeholders = "%s"
-    sql = f"""
-        SELECT dept_id 
-        FROM sys_dept 
-        WHERE dept_name IN ({placeholders}) AND status = '0' AND del_flag = '0'
-    """
-
-    # 使用参数化查询防止 SQL 注入
-    results = db_connection.execute_query(sql, params=department_names[-1])
-    dept_ids = [row["dept_id"] for row in results]
-    return dept_ids
+# def get_department_ids(db_connection, department_names):
+#     """
+#     根据部门名称列表获取对应的部门 ID 列表。
+#     """
+#     # 判断部门名称列表是否为空或非列表类型
+#     if not department_names or not isinstance(department_names, list):
+#         return []
+#
+#     # 构造参数化 SQL 查询
+#     placeholders = "%s"
+#     sql = f"""
+#         SELECT dept_id
+#         FROM sys_dept
+#         WHERE dept_name IN ({placeholders}) AND status = '0' AND del_flag = '0'
+#     """
+#
+#     # 使用参数化查询防止 SQL 注入，执行查询
+#     results = db_connection.execute_query(sql, params=department_names[-1])
+#     # 查询结果是一个列表，每个元素是一个字典，包含一个字段，需要将内容转换为列表
+#     dept_ids = [row["dept_id"] for row in results]
+#     return dept_ids
 
 
 def build_meeting_room_sql(room=None, capacity=None, device=None, status=None,
@@ -575,12 +592,14 @@ def build_meeting_room_sql(room=None, capacity=None, device=None, status=None,
             FROM (SELECT * FROM meeting_room WHERE del_flag=0
             
         """
-
+    # 存放动态条件列表和参数字典
     conditions = []
     params = {}
 
     if room:
+        # 添加room条件
         conditions.append("AND (name LIKE %(room)s OR number LIKE %(room)s)")
+        # 添加room参数
         params["room"] = f"%{room}%"
 
     if capacity is not None and capacity.strip():
@@ -593,12 +612,16 @@ def build_meeting_room_sql(room=None, capacity=None, device=None, status=None,
 
     if status:
         if status == "全部":
+            # 若status为全部，则不添加条件
             pass
         if status == "正常":
+            # 若status为正常，则添加条件
             conditions.append("AND state = 0")
         if status == "维修中":
+            # 若status为维修中，则添加条件
             conditions.append("AND state = 1")
         if status == "暂时关闭":
+            # 若status为暂时关闭，则添加条件
             conditions.append("AND state = 2")
 
     if location:
@@ -606,16 +629,18 @@ def build_meeting_room_sql(room=None, capacity=None, device=None, status=None,
         params["location"] = f"%{location}%"
 
     if approval:
-        # 假设 "是" 表示启用审批，即 enable_approve = 1；"否" 为 0；"全部" 不加条件
+        #  "是" 表示启用审批，添加条件enable_approve = 1；"否" 为 0；"全部" 不加条件
         if approval == "是":
             conditions.append("AND enable_approve = 1")
         elif approval == "否":
             conditions.append("AND enable_approve = 0")
 
     if dept_ids != "" and dept_ids != [] and isinstance(dept_ids, list):
+        # 若dept_ids不为空且为列表，则添加条件management IN (dept_id1, dept_id2, ...)
         placeholders = ','.join(str(int(dept_id)) for dept_id in dept_ids)
         conditions.append(f"AND management IN ({placeholders})")
 
+    # 拼接sql
     sql += " " + " ".join(conditions)
     sql += ') as mr '
     sql += """LEFT JOIN (SELECT * FROM sys_dept WHERE status='0' AND del_flag='0') as sd ON mr.management=sd.dept_id
@@ -625,10 +650,11 @@ def build_meeting_room_sql(room=None, capacity=None, device=None, status=None,
             """
     sql += """ WHERE 1=1 """
 
+    # 若manager不为空，则添加条件和参数
     if manager:
         params["manager"] = f"%{manager}%"
         sql +="""AND su1.nick_name LIKE %(manager)s"""
-
+    # 添加查询条件，按照创建时间倒序
     sql += " ORDER BY mr.create_time DESC;"
 
     return sql, params
@@ -686,13 +712,12 @@ class TestQueryMeetingRoom(BaseCase):
         meeting_room_manage_query.page.wait_for_timeout(2000)  # 等待 2 秒
         self.log_step("等待查询结果加载")
         pages_data, pages_data_count = meeting_room_manage_query.get_table_data()
-        self.log_step("获取表格数据")
+        self.log_step("获取所有页面的表格数据")
 
-        # 获取部门 ID 列表
+        # 根据查询条件中给出的部门名称，获取对应的部门 ID 列表
         if departments and departments != "" and isinstance(departments, list):
             # 构造参数化 SQL 查询
             sql = "SELECT dept_id FROM sys_dept WHERE dept_name = %(dept_name)s AND status = '0' AND del_flag = '0'"
-            # params = {"dept_name": "集成公司"}
             db_data_dept_ids = meeting_room_manage_query.get_db_data(db_connection, query=sql,
                                                                     params={"dept_name": departments[-1]})
             dept_ids = [row["dept_id"] for row in db_data_dept_ids]
@@ -703,7 +728,7 @@ class TestQueryMeetingRoom(BaseCase):
         sql, params = build_meeting_room_sql(room=room, capacity=capacity, device=device, status=status,
                                              location=location, approval=approval, dept_ids=dept_ids,
                                              manager=manager)
-
+        # 根据sql语句和参数，从数据库中提取数据
         db_data = meeting_room_manage_query.get_db_data(db_connection, query=sql, params=params)
         self.log_step("从数据库中提取数据")
 
@@ -715,6 +740,7 @@ class TestQueryMeetingRoom(BaseCase):
 
 class TestDeleteMeetingRoom(BaseCase):
     def test_delete_meeting_room(self, meeting_room_manage_edit_and_del_pre, db_connection):
+        # 从数据库中统计状态为删除的数据条数
         db_data_pre = meeting_room_manage_edit_and_del_pre.get_db_data(
             db_connection,
             query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
@@ -726,9 +752,11 @@ class TestDeleteMeetingRoom(BaseCase):
         self.log_step("点击删除按钮,弹窗后点击确定按钮")
         meeting_room_manage_edit_and_del_pre.verify_delete_success_message()
         self.log_step("验证页面出现删除成功字样")
+        # 等待1秒
         meeting_room_manage_edit_and_del_pre.page.wait_for_timeout(1000)
         _, count_after = meeting_room_manage_edit_and_del_pre.get_table_data()
         self.log_step("统计删除成功操作后表格行数")
+        # 断言：表格中的行数减1
         assert count_after == count_pre - 1, "表格中的行数未减少"
         # 验证数据库中的数据是否已删除（或标记为已删除）
         db_connection.ping(reconnect=True)  # 确保数据库连接有效
@@ -738,10 +766,12 @@ class TestDeleteMeetingRoom(BaseCase):
             query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
         )
         db_count_after = db_data_after[0]["count"]
+        # 断言：数据库中状态为已删除的数据多了1条
         assert db_count_after == db_count_pre + 1, "数据库中的数据未删除"
         self.log_step("验证数据库中的数据是否已删除")
 
     def test_delete_meeting_room_cancel(self, meeting_room_manage_edit_and_del_pre, db_connection):
+        # 从数据库中统计状态为删除的数据条数
         db_data_pre = meeting_room_manage_edit_and_del_pre.get_db_data(
             db_connection,
             query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
@@ -757,13 +787,16 @@ class TestDeleteMeetingRoom(BaseCase):
         self.log_step("统计删除取消操作后表格行数")
         meeting_room_manage_edit_and_del_pre.verify_delete_cancel_message(count_pre, count_after)
         self.log_step("验证删除取消")
+        # 等待1秒
         meeting_room_manage_edit_and_del_pre.page.wait_for_timeout(1000)
         # 验证数据库中的数据是否已删除（或标记为已删除）
         db_connection.ping(reconnect=True)  # 确保数据库连接有效
         db_connection.commit()
+        # 统计数据库中状态为已删除的数据条数
         db_data_after = meeting_room_manage_edit_and_del_pre.get_db_data(
             db_connection,
             query="SELECT count(*) as count FROM meeting_room WHERE del_flag = '1'",
         )
         db_count_after = db_data_after[0]["count"]
+        # 断言：数据库中状态为已删除的数据条数未改变
         assert db_count_after == db_count_pre, "数据库中的数据被误删除"

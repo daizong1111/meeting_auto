@@ -3,16 +3,15 @@ import datetime
 
 import pytest
 
-
 # 定义运行测试的函数
 def run_tests():
+    # 获取系统当前时间
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    # 将时间拼接到文件名中
     results_dir = f"allure-results_{timestamp}"
     # 如果目录不存在，则创建目录
     if not os.path.exists(results_dir):
         os.makedirs(results_dir)
-    # # 执行测试并指定结果输出目录
-    # os.system(f"pytest --alluredir={results_dir}")
     # 构建 pytest 参数
     pytest_args = ['-v',
                    '-s',
@@ -27,7 +26,6 @@ def run_tests():
                    ]
     # 运行 pytest
     pytest.main(pytest_args)
-
     # 生成HTML报告
     os.system(f"allure serve {results_dir}")
 

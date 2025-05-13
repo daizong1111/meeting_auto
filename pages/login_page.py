@@ -10,7 +10,7 @@ class LoginPage:
     def __init__(self, page: Page):
         # 初始化页面对象和页面元素
         self.page = page
-        self.username_input = page.get_by_placeholder("账号")  # 邮箱输入框
+        self.username_input = page.get_by_placeholder("账号")  # 账号输入框
         self.password_input = page.get_by_placeholder("密码")  # 密码输入框
         self.captcha_input = page.get_by_placeholder("验证码") # 验证码
         self.login_button = page.get_by_role("button", name="登录")  # 登录按钮

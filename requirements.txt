@@ -6,3 +6,5 @@ allure-python-commons~=2.14.0
 allure-pytest~=2.14.0
 logging~=0.4.9.6
 python-dateutil~=2.9.0.post0
+Pillow~=10.0.0
+pytesseract~=0.3.10
